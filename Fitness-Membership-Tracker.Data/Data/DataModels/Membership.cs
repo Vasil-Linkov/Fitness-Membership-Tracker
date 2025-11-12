@@ -30,11 +30,11 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
 
 
         [ForeignKey(nameof(Location))]
-        public int LocationID { get; set; }
-        public Location Location { get; set; }
+        public int? LocationId { get; set; }
+        public Location? Location { get; set; } = null;
 
         [ForeignKey(nameof(Member))]
-        public string MemberId { get; set; }
-        public Member Member { get; set; }
+        public string? MemberId { get; set; }
+        public Member? Member { get; set; } = null;
     }
 }

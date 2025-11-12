@@ -59,7 +59,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Employee",
+                name: "Employees",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -71,17 +71,16 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     Salary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LocationId = table.Column<int>(type: "int", nullable: false)
+                    LocationId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employee", x => x.Id);
+                    table.PrimaryKey("PK_Employees", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Employee_Locations_LocationId",
+                        name: "FK_Employees_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
-                            principalColumn: "Id",
-                            onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -95,8 +94,8 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     LocationRegistered = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LocationID = table.Column<int>(type: "int", nullable: false),
-                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    LocationId = table.Column<int>(type: "int", nullable: true),
+                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -105,20 +104,18 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                         name: "FK_Memberships_AspNetUsers_MemberId",
                         column: x => x.MemberId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Memberships_Locations_LocationID",
-                        column: x => x.LocationID,
+                        name: "FK_Memberships_Locations_LocationId",
+                        column: x => x.LocationId,
                         principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Memberships_MebershipTiers_TierId",
                         column: x => x.TierId,
                         principalTable: "MebershipTiers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -131,8 +128,8 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
-                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    EmployeeId = table.Column<int>(type: "int", nullable: true),
+                    MemberId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -141,14 +138,12 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                         name: "FK_Payments_AspNetUsers_MemberId",
                         column: x => x.MemberId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Payments_Employee_EmployeeId",
+                        name: "FK_Payments_Employees_EmployeeId",
                         column: x => x.EmployeeId,
-                        principalTable: "Employee",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalTable: "Employees",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -157,14 +152,14 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                 column: "MembershipId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Employee_LocationId",
-                table: "Employee",
+                name: "IX_Employees_LocationId",
+                table: "Employees",
                 column: "LocationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Memberships_LocationID",
+                name: "IX_Memberships_LocationId",
                 table: "Memberships",
-                column: "LocationID");
+                column: "LocationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Memberships_MemberId",
@@ -191,8 +186,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                 table: "AspNetUsers",
                 column: "MembershipId",
                 principalTable: "Memberships",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.SetNull);
+                principalColumn: "Id");
         }
 
         /// <inheritdoc />
@@ -212,7 +206,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                 name: "MebershipTiers");
 
             migrationBuilder.DropTable(
-                name: "Employee");
+                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "Locations");

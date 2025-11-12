@@ -25,12 +25,12 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
 
 
         [ForeignKey(nameof(Employee))]
-        public int EmployeeId { get; set; }
-        public Employee Employee { get; set; }
+        public int? EmployeeId { get; set; }
+        public Employee? Employee { get; set; } = null;
 
 
         [ForeignKey(nameof(Member))]
-        public string MemberId { get; set; }
-        public Member Member { get; set; }
+        public string? MemberId { get; set; }
+        public Member? Member { get; set; } = null;
     }
 }

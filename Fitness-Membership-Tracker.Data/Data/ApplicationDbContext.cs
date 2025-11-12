@@ -13,10 +13,11 @@ namespace Fitness_Membership_Tracker.Data
         }
 
         public DbSet<Location> Locations { get; set; }
+        public DbSet<MembershipTier> MebershipTiers { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<Membership> Memberships { get; set; }
         public DbSet<Payment> Payments { get; set; }
-        public DbSet<MembershipTier> MebershipTiers { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

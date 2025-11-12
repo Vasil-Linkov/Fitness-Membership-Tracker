@@ -17,7 +17,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -45,7 +45,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("LocationId")
+                    b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
@@ -63,7 +63,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.ToTable("Employee");
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Location", b =>
@@ -102,14 +102,13 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LocationID")
+                    b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
                     b.Property<string>("LocationRegistered")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MemberId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Price")
@@ -123,7 +122,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LocationID");
+                    b.HasIndex("LocationId");
 
                     b.HasIndex("MemberId");
 
@@ -180,11 +179,10 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<string>("MemberId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("PaymentDate")
@@ -418,7 +416,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
-                    b.Property<int>("MembershipId")
+                    b.Property<int?>("MembershipId")
                         .HasColumnType("int");
 
                     b.HasIndex("MembershipId");
@@ -430,9 +428,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                 {
                     b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Location", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.Navigation("Location");
                 });
@@ -441,15 +437,11 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                 {
                     b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Location", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Member", "Member")
                         .WithMany()
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MemberId");
 
                     b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.MembershipTier", "Tier")
                         .WithMany()
@@ -468,15 +460,11 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                 {
                     b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Employee", "Employee")
                         .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Member", "Member")
                         .WithMany()
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MemberId");
 
                     b.Navigation("Employee");
 
@@ -538,9 +526,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                 {
                     b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Membership", "Membership")
                         .WithMany()
-                        .HasForeignKey("MembershipId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MembershipId");
 
                     b.Navigation("Membership");
                 });
