@@ -9,10 +9,14 @@ using Microsoft.AspNetCore.Identity;
 namespace Fitness_Membership_Tracker.Data.Data.DataModels
 {
     public class Member : IdentityUser
-    { 
+    {
+
+        [ForeignKey(nameof(Payment))]   
+        public int? PaymentId { get; set; }
+        public Payment Payment { get; set; }
 
         [ForeignKey(nameof(Membership))]
         public int? MembershipId { get; set; }   
-        public Membership? Membership { get; set; } = null;
+        public Membership Membership { get; set; } = null;
     }
 }

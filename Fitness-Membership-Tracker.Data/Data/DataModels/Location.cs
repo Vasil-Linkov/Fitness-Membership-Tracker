@@ -20,5 +20,7 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
 
         [Required]
         public string Address { get; set; }
+
+        public ICollection<LocationMembership> LocationMemberships { get; set; } = new List<LocationMembership>();
     }
 }

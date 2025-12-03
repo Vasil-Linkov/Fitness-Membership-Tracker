@@ -20,14 +20,7 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
         public decimal MonthlyPrice { get; set; }
 
         [Required]
-        [Range(1, 12)]
-        public int Duration { get; set; }
-
-        [Required]
         public string Description { get; set; }
-
-        [Required]
-        public bool IsLocationRestricted { get; set; }
 
         [Required, Range(1, 24)]
         public int MaxSessionsPerMonth { get; set; }   

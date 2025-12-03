@@ -20,9 +20,6 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
         public string LastName { get; set; }
 
         [Required]
-        public string Position { get; set; }
-
-        [Required]
         public DateTime HireDate { get; set; }
 
         [Required]
@@ -38,6 +35,6 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
 
         [ForeignKey(nameof(Location))]
         public int? LocationId { get; set; }
-        public Location? Location { get; set; } = null;
+        public Location Location { get; set; }
     }
 }

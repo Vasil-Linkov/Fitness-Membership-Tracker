@@ -22,6 +22,9 @@ namespace Fitness_Membership_Tracker.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<LocationMembership>()
+                .HasKey(lm => new {lm.LocationId, lm.MembershipId});
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
