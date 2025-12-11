@@ -115,7 +115,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                         column: x => x.TierId,
                         principalTable: "MebershipTiers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(

@@ -59,7 +59,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Location", b =>
@@ -84,7 +84,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.LocationMembership", b =>
@@ -99,7 +99,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
                     b.HasIndex("MembershipId");
 
-                    b.ToTable("LocationMembership");
+                    b.ToTable("LocationMembership", (string)null);
                 });
 
             modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Membership", b =>
@@ -139,7 +139,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
                     b.HasIndex("TierId");
 
-                    b.ToTable("Memberships");
+                    b.ToTable("Memberships", (string)null);
                 });
 
             modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.MembershipTier", b =>
@@ -166,7 +166,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MebershipTiers");
+                    b.ToTable("MebershipTiers", (string)null);
                 });
 
             modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Payment", b =>
@@ -208,7 +208,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
                     b.HasIndex("MembershipId");
 
-                    b.ToTable("Payments");
+                    b.ToTable("Payments", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
