@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Fitness-Membership-Tracker.Data\Fitness-Membership-Tracker.Data.csproj" />
+    <ProjectReference Include="..\Fitness-Membership-Tracker\Fitness-Membership-Tracker.Web.csproj" />
+  </ItemGroup>
+
 </Project>
