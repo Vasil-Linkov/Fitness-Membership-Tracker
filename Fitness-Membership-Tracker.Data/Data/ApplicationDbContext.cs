@@ -13,7 +13,7 @@ namespace Fitness_Membership_Tracker.Data
         }
 
         public DbSet<Location> Locations { get; set; }
-        public DbSet<MembershipTier> MebershipTiers { get; set; }
+        public DbSet<MembershipTier> MembershipTiers { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<Membership> Memberships { get; set; }
         public DbSet<Payment> Payments { get; set; }
@@ -25,12 +25,6 @@ namespace Fitness_Membership_Tracker.Data
 
             builder.Entity<LocationMembership>()
                 .HasKey(lm => new {lm.LocationId, lm.MembershipId});
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=FitnessMembershipTrackerDb;Trusted_Connection=True;",
-                ob => ob.MigrationsAssembly("Fitness-Membership-Tracker.Data"));
         }
     }
 }

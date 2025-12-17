@@ -14,7 +14,7 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
         public int Id { get; set; }
 
         [Required]
-        public MembershipTier Tier { get; set; }
+        public MembershipTier MembershipTier { get; set; }
         
         [Required]
         public DateTime StartDate { get; set; }
