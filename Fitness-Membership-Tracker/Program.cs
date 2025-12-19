@@ -25,13 +25,6 @@ namespace Fitness_Membership_Tracker
 
             var app = builder.Build();
 
-			using (var scope = app.Services.CreateScope())
-			{
-				var services = scope.ServiceProvider;
-				var context = services.GetRequiredService<ApplicationDbContext>();
-				DBSeeding.Seed();
-			}
-
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
             {

@@ -1,4 +1,5 @@
 ﻿using Fitness_Membership_Tracker.Data.Data.DataModels;
+using Fitness_Membership_Tracker.Services;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,10 @@ namespace Fitness_Membership_Tracker.Data
             builder.Entity<LocationMembership>()
                 .HasKey(lm => new {lm.LocationId, lm.MembershipId});
 
+
+            builder.Entity<Location>().HasData(DBSeeding.SeedLocations());
+            builder.Entity<MembershipTier>().HasData(DBSeeding.SeedMembershipTiers());
+            builder.Entity<Employee>().HasData(DBSeeding.SeedEmployees());
             
         }
     }
