@@ -1,11 +1,10 @@
 ﻿using Fitness_Membership_Tracker.Data.Data.DataModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Fitness_Membership_Tracker.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+	public class ApplicationDbContext : IdentityDbContext<Member>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -25,6 +24,8 @@ namespace Fitness_Membership_Tracker.Data
 
             builder.Entity<LocationMembership>()
                 .HasKey(lm => new {lm.LocationId, lm.MembershipId});
+
+            
         }
     }
 }

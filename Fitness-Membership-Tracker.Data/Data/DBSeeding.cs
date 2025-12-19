@@ -11,7 +11,53 @@ namespace Fitness_Membership_Tracker.Services
 {
     public class DBSeeding
     {
-        ApplicationDbContext _context;
+        static ApplicationDbContext _context;
+		private static readonly IReadOnlyList<string> First_Names = new List<string>
+		{
+			"Alexander",
+			"Ivan",
+			"Petar",
+			"Georgi",
+			"Maria",
+			"Elena",
+			"Viktoria",
+			"Nikola",
+			"Dimitar",
+			"Kristina",
+			"Stefan",
+			"Radoslav",
+			"Svetlana",
+			"Mihail",
+			"Iva",
+			"Todor",
+			"Katerina",
+			"Hristo",
+			"Boris",
+			"Desislava"
+		};
+		private static readonly IReadOnlyList<string> Last_Names = new List<string>
+		{
+			"Ivanov",
+			"Petrov",
+			"Georgiev",
+			"Dimitrov",
+			"Kovachev",
+			"Nikolaev",
+			"Radoslavov",
+			"Hristov",
+			"Vasilev",
+			"Stoyanov",
+			"Mihaylov",
+			"Kolev",
+			"Todorov",
+			"Nikolov",
+			"Zahariev",
+			"Simeonov",
+			"Vladimirov",
+			"Bozhkov",
+			"Angelov",
+			"Daskalov"
+		};
 
         public DBSeeding(ApplicationDbContext context)
         {
@@ -19,16 +65,30 @@ namespace Fitness_Membership_Tracker.Services
         }
 
 
-        public void Seed()
+		private static string GenerateEmail(string firstName, string lastName)
+		{
+			StringBuilder email = new StringBuilder();
+
+			email.Append(firstName);
+			email.Append('.');
+			email.Append(lastName);
+			email.Append("@gmail.com");
+
+			return email.ToString();
+		}
+		private static string GeneratePhoneNumber()
+		{
+			string number = "";
+			for (int i = 0; i < 10; i++)
+			{
+				number += Random.Shared.Next(0, 10);
+			}
+			return number;
+		}
+
+		public static void Seed()
         {
             _context.Database.EnsureCreated();
-
-            if (!_context.Members.Any())
-            {
-
-
-                _context.SaveChanges();
-            }
 
             if (!_context.Locations.Any())
             {
@@ -51,6 +111,13 @@ namespace Fitness_Membership_Tracker.Services
                     {					
                         Id = 3,
                         Address = "ул. Христо Ботев 23, Център, 1000",
+						City = "Sofia",
+						Country = "Bulgaria"
+					},
+					new Location
+					{
+						Id = 4,
+						Address = "ул. Васил Левски 45",
 						City = "Sofia",
 						Country = "Bulgaria"
 					}
@@ -97,21 +164,28 @@ namespace Fitness_Membership_Tracker.Services
 
             if (!_context.Employees.Any())
             {
+				int tempLocationId = 1;
+                for(int  i = 1; i <= 12; i++ )
+				{
+					var employee = new Employee
+					{
+						Id = i,
+						FirstName = First_Names[Random.Shared.Next(0, First_Names.Count)],
+						LastName = Last_Names[Random.Shared.Next(0, Last_Names.Count)],
+						PhoneNumber = GeneratePhoneNumber(),
+						HireDate = new DateTime(2020, Random.Shared.Next(1, 13), Random.Shared.Next(1, 29)),
+						Salary = Random.Shared.Next(1400, 1700),
+						LocationId = tempLocationId
+					};
+					employee.Email = GenerateEmail(employee.FirstName, employee.LastName);
+
+					_context.Employees.Add(employee);
 
 
-                _context.SaveChanges();
-            }
-
-            if (!_context.Memberships.Any())
-            {
-
-
-                _context.SaveChanges();
-            }
-
-            if (!_context.Payments.Any())
-            {
-
+					if (i % 3 == 0)
+						tempLocationId++;
+				}
+				
 
                 _context.SaveChanges();
             }
