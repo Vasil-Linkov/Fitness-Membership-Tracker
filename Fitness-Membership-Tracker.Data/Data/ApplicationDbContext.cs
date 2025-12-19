@@ -1,0 +1,31 @@
+﻿using Fitness_Membership_Tracker.Data.Data.DataModels;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+
+namespace Fitness_Membership_Tracker.Data
+{
+	public class ApplicationDbContext : IdentityDbContext<Member>
+    {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+        }
+
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<MembershipTier> MembershipTiers { get; set; }
+        public DbSet<Member> Members { get; set; }
+        public DbSet<Membership> Memberships { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<LocationMembership>()
+                .HasKey(lm => new {lm.LocationId, lm.MembershipId});
+
+            
+        }
+    }
+}

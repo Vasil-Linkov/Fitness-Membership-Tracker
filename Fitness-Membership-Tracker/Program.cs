@@ -1,6 +1,9 @@
 using Fitness_Membership_Tracker.Data;
+using Fitness_Membership_Tracker;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Fitness_Membership_Tracker.Services;
+using Fitness_Membership_Tracker.Data.Data.DataModels;
 
 namespace Fitness_Membership_Tracker
 {
@@ -16,14 +19,21 @@ namespace Fitness_Membership_Tracker
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<Member>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+			using (var scope = app.Services.CreateScope())
+			{
+				var services = scope.ServiceProvider;
+				var context = services.GetRequiredService<ApplicationDbContext>();
+				DBSeeding.Seed();
+			}
+
+			// Configure the HTTP request pipeline.
+			if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
             }
