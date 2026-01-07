@@ -1,0 +1,15 @@
+﻿@model YourMembershipViewModel
+
+@{
+	ViewData["Title"] = "Your Membership";
+}
+<div>
+<p>this is a test</p>
+<p>this as well</p>
+
+</div>
+
+@if(Model.Membership == null)
+{
+	<p>No membership Purchesed. <a asp-controller="Membership" asp-action="BuyNewMembership">Here are some. Buy them</a></p>
+}
