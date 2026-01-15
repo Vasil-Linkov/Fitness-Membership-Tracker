@@ -18,6 +18,7 @@ namespace Fitness_Membership_Tracker.Data
         public DbSet<Membership> Memberships { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<LocationMembership> LocationMemberships { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

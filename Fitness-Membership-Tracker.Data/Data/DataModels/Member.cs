@@ -11,6 +11,8 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
     public class Member : IdentityUser
     {
 
+        
+
         [ForeignKey(nameof(Payment))]   
         public int? PaymentId { get; set; }
         public Payment Payment { get; set; }

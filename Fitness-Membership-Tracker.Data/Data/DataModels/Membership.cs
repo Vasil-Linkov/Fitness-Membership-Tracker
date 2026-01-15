@@ -21,9 +21,6 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
         
         [Required]
         public DateTime EndDate { get; set; }
-        
-        [Required]
-        public decimal Price { get; set; }
 
         public string? LocationRegistered { get; set; }
 
