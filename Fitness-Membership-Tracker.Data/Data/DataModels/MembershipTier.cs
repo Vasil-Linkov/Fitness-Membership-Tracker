@@ -22,6 +22,9 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
         [Required]
         public string Description { get; set; }
 
+        [Required]
+        public string Accessibility { get; set;}
+
         [Required, Range(1, 24)]
         public int MaxSessionsPerMonth { get; set; }   
     }

@@ -123,6 +123,7 @@ namespace Fitness_Membership_Tracker.Services
 						Tier = "Basic",
 						MaxSessionsPerMonth = 8,
 						Description = "Access to gym facilities during staffed hours.",
+						Accessibility = "address",
 						MonthlyPrice = 9.99m
 					},
 					new MembershipTier()
@@ -131,6 +132,7 @@ namespace Fitness_Membership_Tracker.Services
 						Tier = "Advanced",
 						MaxSessionsPerMonth = 12,
 						Description = "Access to gym facilities during staffed hours.",
+						Accessibility = "city",
 						MonthlyPrice = 15.99m
 					},
 					new MembershipTier()
@@ -139,6 +141,7 @@ namespace Fitness_Membership_Tracker.Services
 						Tier = "elite",
 						MaxSessionsPerMonth = 18,
 						Description = "Access to gym facilities during staffed hours.",
+						Accessibility = "country",
 						MonthlyPrice = 21.99m
 					},
 					new MembershipTier()
@@ -147,6 +150,7 @@ namespace Fitness_Membership_Tracker.Services
 						Tier = "Ultimate",
 						MaxSessionsPerMonth = 24,
 						Description = "Access to gym facilities during staffed hours.",
+						Accessibility = "any",
 						MonthlyPrice = 29.99m
 					}
 					];
