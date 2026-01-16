@@ -4,6 +4,7 @@ using Fitness_Membership_Tracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fitness_Membership_Tracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260115070440_BugFixChanges")]
+    partial class BugFixChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,134 +68,134 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Email = "Todor.Daskalov@gmail.com",
-                            FirstName = "Todor",
-                            HireDate = new DateTime(2020, 8, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Daskalov",
+                            Email = "Iva.Kolev@gmail.com",
+                            FirstName = "Iva",
+                            HireDate = new DateTime(2020, 3, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Kolev",
                             LocationId = 1,
-                            PhoneNumber = "1477717284",
-                            Salary = 1621m
+                            PhoneNumber = "6171465922",
+                            Salary = 1659m
                         },
                         new
                         {
                             Id = 2,
-                            Email = "Ivan.Bozhkov@gmail.com",
-                            FirstName = "Ivan",
-                            HireDate = new DateTime(2020, 6, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Bozhkov",
+                            Email = "Elena.Zahariev@gmail.com",
+                            FirstName = "Elena",
+                            HireDate = new DateTime(2020, 4, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Zahariev",
                             LocationId = 1,
-                            PhoneNumber = "2400299588",
-                            Salary = 1443m
+                            PhoneNumber = "0901955996",
+                            Salary = 1666m
                         },
                         new
                         {
                             Id = 3,
-                            Email = "Hristo.Petrov@gmail.com",
-                            FirstName = "Hristo",
-                            HireDate = new DateTime(2020, 1, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Petrov",
+                            Email = "Nikola.Vasilev@gmail.com",
+                            FirstName = "Nikola",
+                            HireDate = new DateTime(2020, 11, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Vasilev",
                             LocationId = 1,
-                            PhoneNumber = "8443646192",
-                            Salary = 1645m
+                            PhoneNumber = "7356104259",
+                            Salary = 1535m
                         },
                         new
                         {
                             Id = 4,
-                            Email = "Dimitar.Daskalov@gmail.com",
+                            Email = "Dimitar.Bozhkov@gmail.com",
                             FirstName = "Dimitar",
-                            HireDate = new DateTime(2020, 3, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Daskalov",
+                            HireDate = new DateTime(2020, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Bozhkov",
                             LocationId = 2,
-                            PhoneNumber = "3792603224",
-                            Salary = 1657m
+                            PhoneNumber = "6527414224",
+                            Salary = 1599m
                         },
                         new
                         {
                             Id = 5,
-                            Email = "Georgi.Dimitrov@gmail.com",
-                            FirstName = "Georgi",
-                            HireDate = new DateTime(2020, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Dimitrov",
+                            Email = "Maria.Kovachev@gmail.com",
+                            FirstName = "Maria",
+                            HireDate = new DateTime(2020, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Kovachev",
                             LocationId = 2,
-                            PhoneNumber = "2420741226",
-                            Salary = 1580m
+                            PhoneNumber = "1975626388",
+                            Salary = 1503m
                         },
                         new
                         {
                             Id = 6,
-                            Email = "Viktoria.Stoyanov@gmail.com",
-                            FirstName = "Viktoria",
-                            HireDate = new DateTime(2020, 1, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Stoyanov",
+                            Email = "Nikola.Angelov@gmail.com",
+                            FirstName = "Nikola",
+                            HireDate = new DateTime(2020, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Angelov",
                             LocationId = 2,
-                            PhoneNumber = "2451370384",
-                            Salary = 1671m
+                            PhoneNumber = "2127902660",
+                            Salary = 1579m
                         },
                         new
                         {
                             Id = 7,
-                            Email = "Dimitar.Ivanov@gmail.com",
-                            FirstName = "Dimitar",
-                            HireDate = new DateTime(2020, 2, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Ivanov",
+                            Email = "Iva.Dimitrov@gmail.com",
+                            FirstName = "Iva",
+                            HireDate = new DateTime(2020, 6, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Dimitrov",
                             LocationId = 3,
-                            PhoneNumber = "6268091517",
-                            Salary = 1446m
+                            PhoneNumber = "9269577225",
+                            Salary = 1688m
                         },
                         new
                         {
                             Id = 8,
-                            Email = "Radoslav.Radoslavov@gmail.com",
-                            FirstName = "Radoslav",
-                            HireDate = new DateTime(2020, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Radoslavov",
+                            Email = "Dimitar.Hristov@gmail.com",
+                            FirstName = "Dimitar",
+                            HireDate = new DateTime(2020, 3, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Hristov",
                             LocationId = 3,
-                            PhoneNumber = "3931121388",
-                            Salary = 1414m
+                            PhoneNumber = "8687063840",
+                            Salary = 1557m
                         },
                         new
                         {
                             Id = 9,
-                            Email = "Georgi.Simeonov@gmail.com",
-                            FirstName = "Georgi",
-                            HireDate = new DateTime(2020, 1, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Simeonov",
+                            Email = "Boris.Kolev@gmail.com",
+                            FirstName = "Boris",
+                            HireDate = new DateTime(2020, 7, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Kolev",
                             LocationId = 3,
-                            PhoneNumber = "8626391915",
-                            Salary = 1696m
+                            PhoneNumber = "5067327446",
+                            Salary = 1509m
                         },
                         new
                         {
                             Id = 10,
-                            Email = "Stefan.Bozhkov@gmail.com",
-                            FirstName = "Stefan",
-                            HireDate = new DateTime(2020, 10, 27, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Bozhkov",
+                            Email = "Iva.Kolev@gmail.com",
+                            FirstName = "Iva",
+                            HireDate = new DateTime(2020, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Kolev",
                             LocationId = 4,
-                            PhoneNumber = "9895498508",
-                            Salary = 1406m
+                            PhoneNumber = "2696475192",
+                            Salary = 1482m
                         },
                         new
                         {
                             Id = 11,
-                            Email = "Viktoria.Dimitrov@gmail.com",
-                            FirstName = "Viktoria",
-                            HireDate = new DateTime(2020, 11, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Dimitrov",
+                            Email = "Ivan.Todorov@gmail.com",
+                            FirstName = "Ivan",
+                            HireDate = new DateTime(2020, 1, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Todorov",
                             LocationId = 4,
-                            PhoneNumber = "8790665105",
-                            Salary = 1540m
+                            PhoneNumber = "9375720764",
+                            Salary = 1468m
                         },
                         new
                         {
                             Id = 12,
-                            Email = "Dimitar.Vladimirov@gmail.com",
-                            FirstName = "Dimitar",
-                            HireDate = new DateTime(2020, 10, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Vladimirov",
+                            Email = "Viktoria.Hristov@gmail.com",
+                            FirstName = "Viktoria",
+                            HireDate = new DateTime(2020, 7, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "Hristov",
                             LocationId = 4,
-                            PhoneNumber = "2910291020",
-                            Salary = 1581m
+                            PhoneNumber = "5816053642",
+                            Salary = 1642m
                         });
                 });
 
@@ -381,10 +384,6 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Accessibility")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -407,7 +406,6 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Accessibility = "address",
                             Description = "Access to gym facilities during staffed hours.",
                             MaxSessionsPerMonth = 8,
                             MonthlyPrice = 9.99m,
@@ -416,7 +414,6 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                         new
                         {
                             Id = 2,
-                            Accessibility = "city",
                             Description = "Access to gym facilities during staffed hours.",
                             MaxSessionsPerMonth = 12,
                             MonthlyPrice = 15.99m,
@@ -425,7 +422,6 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                         new
                         {
                             Id = 3,
-                            Accessibility = "country",
                             Description = "Access to gym facilities during staffed hours.",
                             MaxSessionsPerMonth = 18,
                             MonthlyPrice = 21.99m,
@@ -434,7 +430,6 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                         new
                         {
                             Id = 4,
-                            Accessibility = "any",
                             Description = "Access to gym facilities during staffed hours.",
                             MaxSessionsPerMonth = 24,
                             MonthlyPrice = 29.99m,
