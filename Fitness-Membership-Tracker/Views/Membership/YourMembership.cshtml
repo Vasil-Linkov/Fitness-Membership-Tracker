@@ -1,17 +1,88 @@
 ﻿@model YourMembershipViewModel
 
 @{
-	ViewData["Title"] = "Your Membership";
+    ViewData["Title"] = "Your Membership";
 }
-<div>
-<p>this is a test</p>
-<p>this as well</p>
 
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="col-lg-8 col-md-10">
+
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5">
+
+                <div class="text-center mb-5">
+                    <h1 class="fw-bold">Your Membership</h1>
+                    <p class="text-muted">
+                        Overview of your current membership status
+                    </p>
+                </div>
+
+                @if (Model.Membership.Member == null)
+                {
+                    <div class="text-center">
+                        <p class="mb-4">
+                            You do not currently have an active membership.
+                        </p>
+                        <a asp-controller="Membership"
+                           asp-action="BuyNewMembership"
+                           class="btn btn-primary btn-lg rounded-3">
+                            Buy a Membership
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h5 class="text-muted mb-1">Membership Tier</h5>
+                            <p class="fw-semibold fs-5 mb-0">
+                                Model.Membership.MembershipTier.Tier
+                            </p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5 class="text-muted mb-1">Time Remaining</h5>
+                           @* <p class="fw-semibold fs-5 mb-0">
+                                @daysLeft days left
+                            </p>
+                            *@
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5 class="text-muted mb-1">Registered Location</h5>
+                            <p class="fw-semibold mb-0">
+                                @Model.Membership.LocationRegistered
+                            </p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5 class="text-muted mb-1">Monthly Price</h5>
+                            <p class="fw-semibold mb-0">
+                                @Model.Membership.MembershipTier.MonthlyPrice.ToString("C")
+                            </p>
+                        </div>
+
+                        <div class="col-12">
+                            <hr />
+                        </div>
+
+                        <div class="col-12">
+                            <h5 class="text-muted mb-2">Membership Benefits</h5>
+                            <ul class="mb-0">
+                                <li>@Model.Membership.MembershipTier.Description</li>
+                                <li>Access: @Model.Membership.MembershipTier.Accessibility</li>
+                                <li>
+                                    Max sessions per month:
+                                    @Model.Membership.MembershipTier.MaxSessionsPerMonth
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+        </div>
+
+    </div>
 </div>
-
-@if(Model.Membership == null)
-{
-	<p>No membership Purchesed. <a asp-controller="Membership" asp-action="BuyNewMembership">Here are some. Buy them</a></p>
-}else{
-	<p>;></p>
-}
