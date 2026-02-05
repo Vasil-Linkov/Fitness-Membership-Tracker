@@ -1,6 +1,8 @@
 ﻿using Fitness_Membership_Tracker.Data;
+using Fitness_Membership_Tracker.Data.Data.DataModels;
 using Fitness_Membership_Tracker.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fitness_Membership_Tracker.Controllers
 {
@@ -13,36 +15,29 @@ namespace Fitness_Membership_Tracker.Controllers
             _context = context;
         }
 
-
-        public IActionResult YourMembership()
+        [HttpGet]
+        public async Task<IActionResult> YourMembership()
         {
 
-            
-            if (User.Identity != null && User.Identity.IsAuthenticated)
-            {
-                var memberships = _context.Members
+            var membershipViewModel = await _context.Members
+                .Include(m => m.Membership)
                 .Where(m => m.UserName == User.Identity.Name)
-                .Select(m => new YourMembershipViewModel()
+                .Select(m => new YourMembershipViewModel
                 {
                     Membership = m.Membership
                 })
-                .ToList();
+                .FirstOrDefaultAsync(); 
 
-                if (memberships.Count < 1)
-                {
-					return View();
-				}
-                else
-                {
-                    return View(memberships[0]);
-                }
-
+            if (membershipViewModel == null)
+            {
+                return View(null);
             }
-             
-            return View();
+
+            return View(membershipViewModel);
         }
 
-		public IActionResult BuyNewMembership()
+
+        public IActionResult BuyNewMembership()
         {
             var membershipTiers = new BuyNewMembershipViewModel()
             {
@@ -52,28 +47,71 @@ namespace Fitness_Membership_Tracker.Controllers
 			return View(membershipTiers);
 		}
 
-        public IActionResult PurchaseMembership(int id)
+        [HttpPost]
+        public IActionResult PurchaseMembership(int membershipTierId)
         {
-            var membershipTier = _context.MembershipTiers.Find(id);
+            var membershipTier = _context.MembershipTiers.Find(membershipTierId);
 
             if (membershipTier != null && User.Identity != null && User.Identity.IsAuthenticated)
             {
-				var member = _context.Members
-					.FirstOrDefault(m => m.UserName == User.Identity.Name);
+                var member = _context.Members
+                    .FirstOrDefault(m => m.UserName == User.Identity.Name);
 
+                var locations = _context.Locations.ToList();
 
+                var location = locations[Random.Shared.Next(0, locations.Count)];
 
+                var employeesAtLocation = _context.Employees
+                    .Where(e => e.LocationId == location.Id)
+                    .ToList();
 
-				_context.Memberships.Add(new Data.Data.DataModels.Membership()
+                Employee employee = null;
+
+                if (employeesAtLocation.Any())
                 {
-					MembershipTier = membershipTier,
-					StartDate = DateTime.Now,
-					EndDate = DateTime.Now.AddMonths(1),
-					
-				});
-			}
+                    employee = employeesAtLocation[
+                        Random.Shared.Next(0, employeesAtLocation.Count)
+                    ];
+                }
 
-            return View("YourMembership");
+                var newMembership = new Membership()
+                {
+                    MembershipTierId = membershipTier.Id,
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now.AddMonths(1),
+                    LocationRegistered = location.Address,
+                    MemberId = member.Id
+                };
+
+                _context.Memberships.Add(newMembership);
+                _context.SaveChanges();
+
+                var payment = new Payment()
+                {
+                    Currency = "EUR",
+                    Amount = membershipTier.MonthlyPrice,
+                    PaymentDate = DateTime.Now,
+                    PaymentMethod = "OnSite",
+                    MemberId = member.Id,
+                    MembershipId = newMembership.Id,
+                    EmployeeId = employee?.Id
+                };
+
+                _context.Payments.Add(payment);
+                _context.SaveChanges();
+
+                member.MembershipId = newMembership.Id;
+                member.PaymentId = payment.Id;
+
+                _context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Membership Tier not found or user not authenticated.");
+            }
+
+            return Redirect("YourMembership");
         }
-	}
+
+    }
 }

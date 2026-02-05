@@ -1,0 +1,56 @@
+﻿@using Fitness_Membership_Tracker.Data.Data.DataModels
+@model BuyNewMembershipViewModel
+
+@{
+	ViewData["Title"] = "BuyNewMembership";
+}
+
+
+<div>
+	<h2>Buy new membership!!!!!! and give me moneyyyyyy</h2>
+
+	<div style="border: 1px solid black; padding: 10px; margin: 10px;">
+		<h3>@Model.MembershipTiers[0].Tier</h3>
+		<p>@Model.MembershipTiers[0].Description</p>
+		<p>Price: $@Model.MembershipTiers[0].MonthlyPrice</p>
+		<form asp-controller="Membership" asp-action="PurchaseMembership" method="post">
+			<input type="hidden" name="membershipTierId" value="@Model.MembershipTiers[0].Id" />
+			<input type="hidden" name="access" value="address" />
+			<button type="submit" class="btn btn-primary">Purchase</button>
+		</form>
+	</div>
+
+	<div style="border: 1px solid black; padding: 10px; margin: 10px;">
+		<h3>@Model.MembershipTiers[1].Tier</h3>
+		<p>@Model.MembershipTiers[1].Description</p>
+		<p>Price: $@Model.MembershipTiers[1].MonthlyPrice</p>
+		<form asp-controller="Membership" asp-action="PurchaseMembership" method="post">
+			<input type="hidden" name="membershipTierId" value="@Model.MembershipTiers[1].Id" />
+			<input type="hidden" name="access" value="city" />
+			<button type="submit" class="btn btn-primary">Purchase</button>
+		</form>
+	</div>
+
+	<div style="border: 1px solid black; padding: 10px; margin: 10px;">
+		<h3>@Model.MembershipTiers[2].Tier</h3>
+		<p>@Model.MembershipTiers[2].Description</p>
+		<p>Price: $@Model.MembershipTiers[2].MonthlyPrice</p>
+		<form asp-controller="Membership" asp-action="PurchaseMembership" method="post">
+			<input type="hidden" name="membershipTierId" value="@Model.MembershipTiers[2].Id"/>
+			<input type="hidden" name="access" value="country" />
+			<button type="submit" class="btn btn-primary">Purchase</button>
+		</form>
+	</div>
+	
+	<div style="border: 1px solid black; padding: 10px; margin: 10px;">
+		<h3>@Model.MembershipTiers[3].Tier</h3>
+		<p>@Model.MembershipTiers[3].Description</p>
+		<p>Price: $@Model.MembershipTiers[3].MonthlyPrice</p>
+		<form asp-controller="Membership" asp-action="PurchaseMembership" method="post">
+			<input type="hidden" name="membershipTierId" value="@Model.MembershipTiers[3].Id" />
+			<input type="hidden" name="access" value="any" />
+			<button type="submit" class="btn btn-primary">Purchase</button>
+		</form>
+	</div>
+
+</div>

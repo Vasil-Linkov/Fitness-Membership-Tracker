@@ -1,12 +1,49 @@
 ﻿@using Microsoft.AspNetCore.Identity
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    @if(SignInManager.IsSignedIn(User)){
-        <p>You finally logged in</p>
-    }
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="col-lg-7 col-md-9">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5 text-center">
+
+                @if (!SignInManager.IsSignedIn(User))
+                {
+                    <h1 class="fw-bold mb-3">Welcome</h1>
+                    <p class="text-muted mb-4">
+                        Manage your fitness journey with clarity and control.
+                    </p>
+
+                    <p class="mb-4">
+                        Please log in or register to access your membership details
+                        and stay up to date with your progress.
+                    </p>
+
+                    <div class="d-flex justify-content-center gap-3">
+                        <a class="btn btn-primary btn-lg rounded-3" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                        <a class="btn btn-outline-secondary btn-lg rounded-3" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                    </div>
+                }
+                else
+                {
+                    <h1 class="fw-bold mb-3">Welcome Back</h1>
+                    <p class="text-muted mb-4">
+                        We're glad to see you again.
+                    </p>
+
+                    <p class="mb-4">
+                        Your account is ready. You can view your membership status
+                        and personal information from your profile at any time.
+                    </p>
+
+                    <p class="fw-semibold mb-0">
+                        Stay consistent. Stay committed.
+                    </p>
+                }
+
+            </div>
+        </div>
+    </div>
 </div>
