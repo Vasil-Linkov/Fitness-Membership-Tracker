@@ -12,9 +12,6 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
     {
         [Key]
         public int Id { get; set; }
-
-        [Required]
-        public MembershipTier MembershipTier { get; set; }
         
         [Required]
         public DateTime StartDate { get; set; }
@@ -24,6 +21,10 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
 
         public string? LocationRegistered { get; set; }
 
+
+        [ForeignKey(nameof(MembershipTier))]
+        public int MembershipTierId { get; set; }
+        public MembershipTier MembershipTier { get; set; }
 
         [ForeignKey(nameof(Member))]
         public string? MemberId { get; set; }
