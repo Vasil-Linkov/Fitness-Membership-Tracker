@@ -31,6 +31,9 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
         [Required]
         public string PhoneNumber { get; set; }
 
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
+
 
 
         [ForeignKey(nameof(Location))]

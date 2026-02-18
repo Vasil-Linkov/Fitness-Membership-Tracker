@@ -20,7 +20,8 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
 
         public string PaymentMethod { get; set; }
 
-
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
 
 
 

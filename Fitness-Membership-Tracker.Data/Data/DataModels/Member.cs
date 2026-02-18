@@ -10,8 +10,9 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
 {
     public class Member : IdentityUser
     {
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
 
-        
 
         [ForeignKey(nameof(Payment))]   
         public int? PaymentId { get; set; }
