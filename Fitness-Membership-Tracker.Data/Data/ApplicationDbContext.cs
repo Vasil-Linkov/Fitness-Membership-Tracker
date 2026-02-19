@@ -1,4 +1,5 @@
-﻿using Fitness_Membership_Tracker.Data.Data.DataModels;
+﻿using System.Reflection.Emit;
+using Fitness_Membership_Tracker.Data.Data.DataModels;
 using Fitness_Membership_Tracker.Services;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,13 @@ namespace Fitness_Membership_Tracker.Data
             builder.Entity<Location>().HasData(DBSeeding.SeedLocations());
             builder.Entity<MembershipTier>().HasData(DBSeeding.SeedMembershipTiers());
             builder.Entity<Employee>().HasData(DBSeeding.SeedEmployees());
-            
+
+
+            builder.Entity<Employee>().HasQueryFilter(e => !e.IsDeleted);
+            builder.Entity<Member>().HasQueryFilter(m => !m.IsDeleted);
+            builder.Entity<Membership>().HasQueryFilter(m => !m.IsDeleted);
+            builder.Entity<Payment>().HasQueryFilter(p => !p.IsDeleted);
+
         }
     }
 }
