@@ -29,4 +29,12 @@
     <ProjectReference Include="..\Fitness-Membership-Tracker.Data\Fitness-Membership-Tracker.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Admin\" />
+    <Folder Include="Views\Admin\Employee\" />
+    <Folder Include="Views\Admin\Members\" />
+    <Folder Include="Views\Admin\Memberships\" />
+    <Folder Include="Views\Admin\Payments\" />
+  </ItemGroup>
+
 </Project>
