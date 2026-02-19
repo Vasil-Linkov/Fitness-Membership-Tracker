@@ -14,9 +14,7 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
         public DateTime? DeletedAt { get; set; }
 
 
-        [ForeignKey(nameof(Payment))]   
-        public int? PaymentId { get; set; }
-        public Payment Payment { get; set; }
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
         [ForeignKey(nameof(Membership))]
         public int? MembershipId { get; set; }   

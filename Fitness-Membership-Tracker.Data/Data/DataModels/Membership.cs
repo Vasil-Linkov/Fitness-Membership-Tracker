@@ -19,10 +19,13 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
         [Required]
         public DateTime EndDate { get; set; }
 
-        public string? LocationRegistered { get; set; }
-
         public bool IsDeleted { get; set; } = false;
         public DateTime? DeletedAt { get; set; }
+
+
+        [ForeignKey(nameof(Location))]
+        public int LocationId { get; set; }
+        public Location Location { get; set; }
 
 
         [ForeignKey(nameof(MembershipTier))]
