@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Fitness_Membership_Tracker.Data;
 using Fitness_Membership_Tracker.Data.Data.DataModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Fitness_Membership_Tracker.Services
 {
-    public static class DBSeeding
-    {
+	public static class DBSeeding
+	{
 		private static readonly IReadOnlyList<string> First_Names = new List<string>
 		{
 			"Alexander",
@@ -77,7 +79,6 @@ namespace Fitness_Membership_Tracker.Services
 			}
 			return number;
 		}
-
 
 
 		public static List<Location> SeedLocations()
@@ -186,6 +187,37 @@ namespace Fitness_Membership_Tracker.Services
 
 			return employees;
 		}
+
+
+
+        public static async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<Member>>();
+
+            // Create Admin role if not exists
+            if (!await roleManager.RoleExistsAsync("Admin"))
+            {
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+
+            // Create default admin user
+            var adminEmail = "admin@gym.com";
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+            if (adminUser == null)
+            {
+                adminUser = new Member
+                {
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    EmailConfirmed = true
+                };
+
+                await userManager.CreateAsync(adminUser, "Admin123!");
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+            }
+        }
 
     }
 }
