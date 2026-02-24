@@ -21,6 +21,7 @@ namespace Fitness_Membership_Tracker.Controllers
 
             var membershipViewModel = await _context.Members
                 .Include(m => m.Membership)
+                .ThenInclude(m => m.Member)
                 .Where(m => m.UserName == User.Identity.Name)
                 .Select(m => new YourMembershipViewModel
                 {
@@ -35,7 +36,6 @@ namespace Fitness_Membership_Tracker.Controllers
 
             return View(membershipViewModel);
         }
-
 
         public IActionResult BuyNewMembership()
         {
@@ -79,7 +79,7 @@ namespace Fitness_Membership_Tracker.Controllers
                     MembershipTierId = membershipTier.Id,
                     StartDate = DateTime.Now,
                     EndDate = DateTime.Now.AddMonths(1),
-                    LocationRegistered = location.Address,
+                    LocationId = location.Id,
                     MemberId = member.Id
                 };
 
@@ -101,7 +101,6 @@ namespace Fitness_Membership_Tracker.Controllers
                 _context.SaveChanges();
 
                 member.MembershipId = newMembership.Id;
-                member.PaymentId = payment.Id;
 
                 _context.SaveChanges();
             }
