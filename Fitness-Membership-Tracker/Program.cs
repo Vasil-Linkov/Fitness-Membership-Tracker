@@ -23,12 +23,21 @@ namespace Fitness_Membership_Tracker
             builder.Services.AddIdentity<Member, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedEmail = true;
+
+                options.Lockout.AllowedForNewUsers = false; 
+                options.Lockout.MaxFailedAccessAttempts = int.MaxValue;
+
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
             builder.Services.AddControllersWithViews();
-            builder.Services.AddRazorPages();
 
 
 
@@ -63,7 +72,6 @@ namespace Fitness_Membership_Tracker
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapRazorPages();
 
             app.Run();
         }
