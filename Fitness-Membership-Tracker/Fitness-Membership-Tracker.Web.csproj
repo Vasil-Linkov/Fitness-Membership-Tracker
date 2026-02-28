@@ -30,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Admin\" />
     <Folder Include="Views\Admin\Employee\" />
     <Folder Include="Views\Admin\Members\" />
     <Folder Include="Views\Admin\Memberships\" />
