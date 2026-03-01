@@ -20,6 +20,8 @@
         <label asp-for="RememberMe"></label>
     </div>
 
+    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
     <button type="submit">Login</button>
 </form>
 

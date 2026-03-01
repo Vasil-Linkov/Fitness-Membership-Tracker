@@ -18,23 +18,24 @@ namespace Fitness_Membership_Tracker.Controllers
             _userManager = userManager;
         }
 
+        [HttpGet]
+        public IActionResult Login(string? returnUrl)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
             var user = await _userManager.FindByEmailAsync(model.Email);
 
-            if (user == null)
+            if (user == null || user.IsDeleted)
             {
                 ModelState.AddModelError("", "Invalid login attempt.");
-                return View(model);
-            }
-
-            if (user.IsDeleted)
-            {
-                ModelState.AddModelError("", "Account is deactivated.");
                 return View(model);
             }
 
@@ -46,6 +47,12 @@ namespace Fitness_Membership_Tracker.Controllers
 
             if (result.Succeeded)
             {
+                if (await _userManager.IsInRoleAsync(user, "Admin"))
+                    return RedirectToAction("Index", "Dashboard", "Admin");
+
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    return Redirect(returnUrl);
+
                 return RedirectToAction("Index", "Home");
             }
 
