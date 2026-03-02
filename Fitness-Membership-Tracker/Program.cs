@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Fitness_Membership_Tracker.Services;
 using Fitness_Membership_Tracker.Data.Data.DataModels;
 using Microsoft.Extensions.Options;
+using Fitness_Membership_Tracker.Services.Implementations;
+using Fitness_Membership_Tracker.Services.Interfaces;
 
 namespace Fitness_Membership_Tracker
 {
@@ -38,6 +40,7 @@ namespace Fitness_Membership_Tracker
                 .AddDefaultTokenProviders();
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 
 
