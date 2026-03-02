@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fitness_Membership_Tracker.Data;
-using Fitness_Membership_Tracker.Data.Data.DataModels;
+using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

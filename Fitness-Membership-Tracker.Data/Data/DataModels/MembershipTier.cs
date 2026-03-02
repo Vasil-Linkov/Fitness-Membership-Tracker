@@ -6,7 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fitness_Membership_Tracker.Data.Data.DataModels
+namespace Fitness_Membership_Tracker.Data.DataModels
 {
     public class MembershipTier
     {
@@ -23,9 +23,9 @@ namespace Fitness_Membership_Tracker.Data.Data.DataModels
         public string Description { get; set; }
 
         [Required]
-        public string Accessibility { get; set;}
+        public string Accessibility { get; set; }
 
         [Required, Range(1, 24)]
-        public int MaxSessionsPerMonth { get; set; }   
+        public int MaxSessionsPerMonth { get; set; }
     }
 }

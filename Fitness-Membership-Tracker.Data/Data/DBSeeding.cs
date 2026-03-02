@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Fitness_Membership_Tracker.Data;
 using Fitness_Membership_Tracker.Data.Data.DataModels;
+using Fitness_Membership_Tracker.Data.DataModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
 
 namespace Fitness_Membership_Tracker.Services
 {

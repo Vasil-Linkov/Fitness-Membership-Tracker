@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fitness_Membership_Tracker.Data.Data.DataModels
+namespace Fitness_Membership_Tracker.Data.DataModels
 {
     public class Employee
     {
