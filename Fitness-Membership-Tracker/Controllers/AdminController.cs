@@ -1,4 +1,6 @@
-﻿using Fitness_Membership_Tracker.Data;
+﻿using Fitness_Membership_Tracker.Constants;
+using Fitness_Membership_Tracker.Data;
+using Fitness_Membership_Tracker.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -6,38 +8,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fitness_Membership_Tracker.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = Roles.Admin)]
     public class AdminController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IEmployeeService _employeeService;
 
-        public AdminController(ApplicationDbContext context)
+        public AdminController(IEmployeeService employeeService)
         {
-            _context = context;
-        }
-
-        public IActionResult Dashboard()
-        {
-            return View();
+            _employeeService = employeeService;
         }
 
         public async Task<IActionResult> Employees(int? locationId, string search)
         {
-            var query = _context.Employees
-                .Include(e => e.Location)
-                .AsQueryable();
-
-            if (locationId.HasValue && locationId != 0)
-                query = query.Where(e => e.LocationId == locationId);
-
-            if (!string.IsNullOrEmpty(search))
-                query = query.Where(e =>
-                    e.FirstName.Contains(search) ||
-                    e.LastName.Contains(search));
-
-            var employees = await query.ToListAsync();
-
-            ViewBag.Locations = new SelectList(_context.Locations, "Id", "Name");
+            var employees = await _employeeService.GetEmployeesAsync(locationId, search);
             return View(employees);
         }
 
