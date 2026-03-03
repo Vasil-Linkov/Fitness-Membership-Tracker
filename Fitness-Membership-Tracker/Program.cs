@@ -2,11 +2,12 @@ using Fitness_Membership_Tracker.Data;
 using Fitness_Membership_Tracker;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Fitness_Membership_Tracker.Services;
-using Fitness_Membership_Tracker.Data.Data.DataModels;
 using Microsoft.Extensions.Options;
 using Fitness_Membership_Tracker.Services.Implementations;
 using Fitness_Membership_Tracker.Services.Interfaces;
+using Fitness_Membership_Tracker.Data.DataModels;
+using Fitness_Membership_Tracker.Data.Data.DataModels;
+using Fitness_Membership_Tracker.Services;
 
 namespace Fitness_Membership_Tracker
 {
@@ -40,7 +41,12 @@ namespace Fitness_Membership_Tracker
                 .AddDefaultTokenProviders();
 
             builder.Services.AddControllersWithViews();
+
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+            builder.Services.AddScoped<IMemberService, MemberService>();
+            builder.Services.AddScoped<IMembershipService, MembershipService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<ILocationService, LocationService>();
 
 
 
