@@ -1,8 +1,8 @@
-﻿using Fitness_Membership_Tracker.Data.Data.DataModels;
+﻿using Fitness_Membership_Tracker.Data.DataModels;
 
 namespace Fitness_Membership_Tracker.Models
 {
-	public class BuyNewMembershipViewModel
+    public class BuyNewMembershipViewModel
 	{
 
 		public List<MembershipTier> MembershipTiers { get; set; } = new List<MembershipTier>();

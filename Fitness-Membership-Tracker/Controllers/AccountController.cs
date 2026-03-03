@@ -1,4 +1,5 @@
 ﻿using Fitness_Membership_Tracker.Data.Data.DataModels;
+using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -48,7 +49,7 @@ namespace Fitness_Membership_Tracker.Controllers
             if (result.Succeeded)
             {
                 if (await _userManager.IsInRoleAsync(user, "Admin"))
-                    return RedirectToAction("Index", "Dashboard", "Admin");
+                    return RedirectToAction("Dashboard", "Admin");
 
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     return Redirect(returnUrl);
