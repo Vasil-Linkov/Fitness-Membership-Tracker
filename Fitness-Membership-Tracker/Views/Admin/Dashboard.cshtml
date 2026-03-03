@@ -1,1 +1,51 @@
-﻿
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<h1>Admin Dashboard</h1>
+
+<hr />
+
+<h3>Quick Overview</h3>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap;">
+
+    <div style="border:1px solid #ccc; padding:20px; width:200px;">
+        <h4>Employees</h4>
+        <p >Total: @ViewBag.EmployeeCount</p>
+        <a asp-action="Employees" class="btn btn-primary">Manage Employees</a>
+    </div>
+
+    <div style="border:1px solid #ccc; padding:20px; width:200px;">
+        <h4 >Members</h4>
+        <p >Total: @ViewBag.MemberCount</p>
+        <a asp-action="Members" class="btn btn-primary">Manage Members</a>
+    </div>
+
+    <div style="border:1px solid #ccc; padding:20px; width:200px;">
+        <h4>Memberships</h4>
+        <p >Total: @ViewBag.MembershipCount</p>
+        <a asp-action="Memberships" class="btn btn-primary">Manage Memberships</a>
+    </div>
+
+    <div style="border:1px solid #ccc; padding:20px; width:200px;">
+        <h4>Payments</h4>
+        <p >Total: @ViewBag.PaymentCount</p>
+        <a asp-action="Payments" class="btn btn-primary">View Payments</a>
+    </div>
+
+</div>
+
+<hr />
+
+<h3>Quick Actions</h3>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap;">
+
+    <a asp-action="CreateEmployee" class="btn btn-success">+ Add Employee</a>
+
+    <a asp-action="CreateMembership" class="btn btn-success">+ Add Membership</a>
+
+    <a asp-action="CreatePayment" class="btn btn-success">+ Add Payment</a>
+
+</div>
