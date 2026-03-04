@@ -26,14 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fitness-Membership-Tracker.Data\Fitness-Membership-Tracker.Data.csproj" />
+    <ProjectReference Include="..\Fitness-Membership-Tracker.Services\Fitness-Membership-Tracker.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Admin\Employee\" />
-    <Folder Include="Views\Admin\Members\" />
-    <Folder Include="Views\Admin\Memberships\" />
-    <Folder Include="Views\Admin\Payments\" />
+    <Folder Include="Models\AdminViewModels\" />
   </ItemGroup>
 
 </Project>
