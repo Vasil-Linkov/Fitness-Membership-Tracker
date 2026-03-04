@@ -126,6 +126,32 @@ namespace Fitness_Membership_Tracker.Controllers
 
         #endregion
 
-       
+        #region Payments
+
+        public async Task<IActionResult> Payments()
+        {
+            var payments = await _paymentService.GetAllAsync();
+            return View(payments);
+        }
+
+        public async Task<IActionResult> CreatePayment()
+        {
+            ViewBag.Members = new SelectList(await _memberService.GetAllAsync(), "Id", "Email");
+            ViewBag.Memberships = new SelectList(await _membershipService.GetAllAsync(), "Id", "Name");
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreatePayment(Payment payment)
+        {
+            if (!ModelState.IsValid)
+                return View(payment);
+
+            await _paymentService.CreateAsync(payment);
+            return RedirectToAction(nameof(Payments));
+        }
+
+        #endregion
     }
 }
