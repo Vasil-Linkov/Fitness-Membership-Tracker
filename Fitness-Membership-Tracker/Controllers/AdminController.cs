@@ -95,5 +95,37 @@ namespace Fitness_Membership_Tracker.Controllers
 
         #endregion
 
+        #region Memberships
+
+        public async Task<IActionResult> Memberships()
+        {
+            var memberships = await _membershipService.GetAllAsync();
+            return View(memberships);
+        }
+
+        public IActionResult CreateMembership()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateMembership(Membership membership)
+        {
+            if (!ModelState.IsValid)
+                return View(membership);
+
+            await _membershipService.CreateAsync(membership);
+            return RedirectToAction(nameof(Memberships));
+        }
+
+        public async Task<IActionResult> DeleteMembership(int id)
+        {
+            await _membershipService.DeleteAsync(id);
+            return RedirectToAction(nameof(Memberships));
+        }
+
+        #endregion
+
+       
     }
 }
