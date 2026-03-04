@@ -79,5 +79,21 @@ namespace Fitness_Membership_Tracker.Controllers
 
         #endregion
 
+        #region Members
+
+        public async Task<IActionResult> Members()
+        {
+            var members = await _memberService.GetAllAsync();
+            return View(members);
+        }
+
+        public async Task<IActionResult> DeleteMember(string id)
+        {
+            await _memberService.DeleteAsync(id);
+            return RedirectToAction(nameof(Members));
+        }
+
+        #endregion
+
     }
 }
