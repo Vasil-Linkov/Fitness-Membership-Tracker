@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Fitness_Membership_Tracker.Data
 {
-	public class ApplicationDbContext : IdentityDbContext<Member>
+    public class ApplicationDbContext : IdentityDbContext<Member>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

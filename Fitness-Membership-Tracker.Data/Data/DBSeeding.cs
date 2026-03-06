@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Fitness_Membership_Tracker.Services
 {
-	public static class DBSeeding
+    public static class DBSeeding
 	{
 		private static readonly IReadOnlyList<string> First_Names = new List<string>
 		{
