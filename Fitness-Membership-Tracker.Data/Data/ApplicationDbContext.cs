@@ -38,7 +38,9 @@ namespace Fitness_Membership_Tracker.Data
             builder.Entity<Member>().HasQueryFilter(m => !m.IsDeleted);
             builder.Entity<Membership>().HasQueryFilter(m => !m.IsDeleted);
             builder.Entity<Payment>().HasQueryFilter(p => !p.IsDeleted);
+			builder.Entity<Location>().HasQueryFilter(p => !p.IsDeleted);
 
-        }
+
+		}
     }
 }
