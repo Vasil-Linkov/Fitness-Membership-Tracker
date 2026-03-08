@@ -36,16 +36,16 @@
                         <div class="col-md-6">
                             <h5 class="text-muted mb-1">Membership Tier</h5>
                             <p class="fw-semibold fs-5 mb-0">
-                                Model.Membership.MembershipTier.Tier
+                                @Model.Membership.MembershipTier.Tier
                             </p>
                         </div>
 
                         <div class="col-md-6">
                             <h5 class="text-muted mb-1">Time Remaining</h5>
-                           @* <p class="fw-semibold fs-5 mb-0">
-                                @daysLeft days left
+                             <p class="fw-semibold fs-5 mb-0">
+                                @((Model.Membership.EndDate - DateTime.Now).Days) days
                             </p>
-                            *@
+                           
                         </div>
 
                         <div class="col-md-6">
