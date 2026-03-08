@@ -83,16 +83,15 @@ namespace Fitness_Membership_Tracker.Controllers
                     ];
                 }
 
-                var newMembership = new Membership()
-                {
-                    MembershipTierId = membershipTier.Id,
-                    StartDate = DateTime.Now,
-                    EndDate = DateTime.Now.AddMonths(1),
-                    LocationId = location.Id,
-                    MemberId = member.Id
-                };
+				var newMembership = new Membership()
+				{
+					MembershipTierId = membershipTier.Id,
+					StartDate = DateTime.Now,
+					EndDate = DateTime.Now.AddMonths(1),
+					LocationId = location.Id
+				};
 
-                await _membershipService.CreateAsync(newMembership);
+				await _membershipService.CreateAsync(newMembership);
 
                 var payment = new Payment()
                 {
