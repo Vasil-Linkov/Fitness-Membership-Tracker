@@ -1,60 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Fitness_Membership_Tracker.Data;
+﻿using Fitness_Membership_Tracker.Data;
+using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Fitness_Membership_Tracker.Data.DataModels;
-
 
 namespace Fitness_Membership_Tracker.Services.Implementations
 {
-    public class MemberService : IMemberService
-    {
-        private readonly ApplicationDbContext _context;
+	public class MemberService : IMemberService
+	{
+		private readonly ApplicationDbContext _context;
 
-        public MemberService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+		public MemberService(ApplicationDbContext context)
+		{
+			_context = context;
+		}
 
-        public async Task<List<Member>> GetAllAsync()
-            => await _context.Users
-                .Include(m => m.Membership)
-                .AsNoTracking()
-                .ToListAsync();
-
-        public async Task<Member?> GetByIdAsync(string id)
-            => await _context.Users
-                .Include(m => m.Membership)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-
-        public async Task<Member?> GetByNameAsync(string name)
-			=> await _context.Users
+		public async Task<List<Member>> GetAllAsync()
+		{
+			return await _context.Members
 				.Include(m => m.Membership)
+				.Include(m => m.Payments)
 				.AsNoTracking()
-				.FirstOrDefaultAsync(m => m.UserName == name);
+				.ToListAsync();
+		}
 
-        public async Task UpdateAsync(Member member)
-        {
-            _context.Users.Update(member);
-            await _context.SaveChangesAsync();
-        }
+		public async Task<Member?> GetByIdAsync(string id)
+		{
+			return await _context.Members
+				.Include(m => m.Membership)
+				.Include(m => m.Payments)
+				.FirstOrDefaultAsync(m => m.Id == id);
+		}
 
-        public async Task DeleteAsync(string id)
-        {
-            var member = await GetByIdAsync(id);
-            
-            if (member == null) return;
+		public async Task<Member?> GetByNameAsync(string username)
+		{
+			return await _context.Members
+				.Include(m => m.Membership)
+				.ThenInclude(m => m.Location)
+				.Include(m => m.Membership)
+				.ThenInclude(m => m.MembershipTier)
+				.Include(m => m.Payments)
+				.FirstOrDefaultAsync(m => m.UserName == username);
+		}
 
-            member.IsDeleted = true;
+		public async Task UpdateAsync(Member updatedMember)
+		{
+			var existingMember = await _context.Members.FindAsync(updatedMember.Id);
 
-            _context.Users.Update(member);
-            await _context.SaveChangesAsync();
-        }
-    }
+			if (existingMember == null)
+			{
+				return;
+			}
+
+			existingMember.UserName = updatedMember.UserName;
+			existingMember.Email = updatedMember.Email;
+			existingMember.PhoneNumber = updatedMember.PhoneNumber;
+			existingMember.MembershipId = updatedMember.MembershipId;
+
+			await _context.SaveChangesAsync();
+		}
+
+		public async Task DeleteAsync(string id)
+		{
+			var member = await _context.Members.FindAsync(id);
+
+			if (member == null)
+			{
+				return;
+			}
+
+			member.IsDeleted = true;
+			member.DeletedAt = DateTime.UtcNow;
+
+			await _context.SaveChangesAsync();
+		}
+	}
 }
