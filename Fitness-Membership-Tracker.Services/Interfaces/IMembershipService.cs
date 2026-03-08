@@ -12,6 +12,7 @@ namespace Fitness_Membership_Tracker.Services.Interfaces
     {
         Task<List<Membership>> GetAllAsync();
         Task<Membership?> GetByIdAsync(int id);
+        Task<Membership?> GetMembershipByMember(Member member);
         Task CreateAsync(Membership membership);
         Task UpdateAsync(Membership membership);
         Task DeleteAsync(int id);
