@@ -44,6 +44,15 @@ namespace Fitness_Membership_Tracker.Services.Implementations
 				.FirstOrDefaultAsync(m => m.Id == member.MembershipId);
 		}
 
+		public async Task<Membership?> GetByIdIncludingDeletedAsync(int id)
+		{
+			return await _context.Memberships
+				.IgnoreQueryFilters()
+				.Include(m => m.Location)
+				.Include(m => m.MembershipTier)
+				.FirstOrDefaultAsync(m => m.Id == id);
+		}
+
 		public async Task CreateAsync(Membership membership)
 		{
 			await _context.Memberships.AddAsync(membership);
