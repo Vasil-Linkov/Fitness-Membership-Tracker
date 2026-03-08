@@ -1,6 +1,32 @@
-﻿namespace Fitness_Membership_Tracker.Views.Admin
-{
-    public class CreateMembership
-    {
-    }
+﻿@model Fitness_Membership_Tracker.Data.Data.DataModels.Membership
+
+@{
+    ViewData["Title"] = "Create Membership";
 }
+
+<h2>Create Membership</h2>
+
+<form method="post">
+
+    <div>
+        <label>Email</label>
+        <input name="email" />
+    </div>
+
+    <div>
+        <label>Price</label>
+        <select asp-for="Location" asp-items="ViewBag.Locations" />
+    </div>
+
+    <div>
+        <label>Tier</label>
+        <select asp-for="MembershipTierId" asp-items="ViewBag.MembershipTier"></select>
+    </div>
+
+    <button type="submit">Create</button>
+
+</form>
+
+<br />
+
+<a asp-action="Memberships">Back</a>

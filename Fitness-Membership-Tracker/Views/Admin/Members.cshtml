@@ -1,6 +1,32 @@
-﻿namespace Fitness_Membership_Tracker.Views.Admin
-{
-    public class Members
-    {
-    }
+﻿@model IEnumerable<Fitness_Membership_Tracker.Data.Data.DataModels.Member>
+
+@{
+    ViewData["Title"] = "Members";
 }
+
+<h2>Members</h2>
+
+<table border="1">
+
+    <tr>
+        <th>Id</th>
+        <th>Email</th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var m in Model)
+    {
+        <tr>
+            <td>@m.Id</td>
+            <td>@m.Email</td>
+            <td>
+                <a asp-action="DeleteMember" asp-route-id="@m.Id">Delete</a>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<br />
+
+<a asp-action="Dashboard">Back</a>

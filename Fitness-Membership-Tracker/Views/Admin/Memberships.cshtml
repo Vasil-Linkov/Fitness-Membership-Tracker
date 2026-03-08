@@ -1,6 +1,46 @@
-﻿namespace Fitness_Membership_Tracker.Views.Admin
-{
-    public class Memberships
-    {
-    }
-}
+﻿@model IEnumerable<Fitness_Membership_Tracker.Data.Data.DataModels.Membership>
+
+<h2>Memberships</h2>
+
+<p>
+    <a asp-action="CreateMembership">Create Membership</a>
+</p>
+
+<table border="1" cellpadding="5">
+
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Location</th>
+            <th>Tier</th>
+            <th>Member</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var membership in Model)
+        {
+            <tr>
+                <td>@membership.Id</td>
+                <td>@membership.StartDate.ToShortDateString()</td>
+                <td>@membership.EndDate.ToShortDateString()</td>
+                <td>@membership.Location?.City</td>
+                <td>@membership.MembershipTier?.Tier</td>
+                <td>@membership.Member?.Email</td>
+
+                <td>
+                    <form asp-action="DeleteMembership" method="post">
+                        <input type="hidden" name="id" value="@membership.Id" />
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>

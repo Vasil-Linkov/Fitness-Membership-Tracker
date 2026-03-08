@@ -1,1 +1,47 @@
-﻿
+﻿@model CreateEmployeeAdminViewModel
+
+<h2>Create Employee</h2>
+
+<form method="post">
+
+	<div>
+		<label>First Name</label>
+		<input asp-for="FirstName" />
+		<span asp-validation-for="FirstName"></span>
+	</div>
+
+	<div>
+		<label>Last Name</label>
+		<input asp-for="LastName" />
+		<span asp-validation-for="LastName"></span>
+	</div>
+
+	<div>
+		<label>Hire Date</label>
+		<input asp-for="HireDate" type="date" />
+	</div>
+
+	<div>
+		<label>Salary</label>
+		<input asp-for="Salary" />
+	</div>
+
+	<input type="hidden" asp-for="Email" value="@(Model.FirstName).@(Model.LastName)@@gym.com" />
+
+	<div>
+		<label>Phone</label>
+		<input asp-for="PhoneNumber" />
+	</div>
+
+	<div>
+		<label>Location</label>
+		<select asp-for="LocationId" asp-items="Model.Locations"></select>
+	</div>
+
+	<input type="hidden" asp-for="Locations" value="@Model.Locations" />
+
+	<button type="submit">Create</button>
+
+</form>
+
+<a asp-action="Employees">Back</a>

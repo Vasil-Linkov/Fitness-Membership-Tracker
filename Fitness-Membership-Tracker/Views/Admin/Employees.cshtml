@@ -1,1 +1,44 @@
-﻿
+﻿@model IEnumerable<Fitness_Membership_Tracker.Data.DataModels.Employee>
+
+@{
+    ViewData["Title"] = "Employees";
+}
+
+<h2>Employees</h2>
+
+<p>
+    <a asp-action="CreateEmployee">Create New Employee</a>
+</p>
+
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Hire Date</th>
+            <th>Salary</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.FirstName @employee.LastName</td>
+                <td>@employee.Email</td>
+                <td>@employee.PhoneNumber</td>
+                <td>@employee.HireDate.ToShortDateString()</td>
+                <td>@employee.Salary</td>
+
+                <td>
+                    <form asp-action="DeleteEmployee" method="post">
+                        <input type="hidden" name="id" value="@employee.Id" />
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
