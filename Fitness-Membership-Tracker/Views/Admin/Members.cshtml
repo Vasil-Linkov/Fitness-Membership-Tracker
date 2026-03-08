@@ -4,29 +4,52 @@
     ViewData["Title"] = "Members";
 }
 
-<h2>Members</h2>
+<h2 class="mb-3">Members</h2>
 
-<table border="1">
+<div class="card shadow-sm">
+    <div class="card-body">
 
-    <tr>
-        <th>Id</th>
-        <th>Email</th>
-        <th>Actions</th>
-    </tr>
+        @if (!Model.Any())
+        {
+            <p class="text-muted">No members registered.</p>
+        }
+        else
+        {
+            <table class="table table-striped">
 
-    @foreach (var m in Model)
-    {
-        <tr>
-            <td>@m.Id</td>
-            <td>@m.Email</td>
-            <td>
-                <a asp-action="DeleteMember" asp-route-id="@m.Id">Delete</a>
-            </td>
-        </tr>
-    }
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Membership</th>
+                        <th>Payments</th>
+                    </tr>
+                </thead>
 
-</table>
+                <tbody>
+                    @foreach (var member in Model)
+                    {
+                        <tr>
+                            <td>@member.Email</td>
 
-<br />
+                            <td>
+                                @if (member.MembershipId == null)
+                                {
+                                    <span class="text-muted">None</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                            </td>
 
-<a asp-action="Dashboard">Back</a>
+                            <td>@member.Payments?.Count</td>
+
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        }
+
+    </div>
+</div>
