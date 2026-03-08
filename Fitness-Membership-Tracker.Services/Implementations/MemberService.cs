@@ -42,6 +42,13 @@ namespace Fitness_Membership_Tracker.Services.Implementations
 				.FirstOrDefaultAsync(m => m.UserName == username);
 		}
 
+		public async Task<List<Member>?> GetMembersWithoutMembership()
+		{
+            return await _context.Members
+				.Where(m => m.MembershipId == null)
+                .ToListAsync();
+        }
+
 		public async Task UpdateAsync(Member updatedMember)
 		{
 			var existingMember = await _context.Members.FindAsync(updatedMember.Id);
