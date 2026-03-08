@@ -18,6 +18,9 @@ namespace Fitness_Membership_Tracker.Models.AdminViewModels
 
         [Required]
         public int MembershipTierId { get; set; }
+        public int MemberId { get; set; }
+
+        public IEnumerable<SelectListItem> Members { get; set; }
 
         public IEnumerable<SelectListItem> Locations { get; set; }
 

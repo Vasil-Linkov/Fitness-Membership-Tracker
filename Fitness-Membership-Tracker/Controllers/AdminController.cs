@@ -129,7 +129,8 @@ namespace Fitness_Membership_Tracker.Controllers
 				StartDate = DateTime.Now,
 				EndDate = DateTime.Now.AddMonths(1),
 				Locations = await GetLocations(),
-				Tiers = await GetTiers()
+				Tiers = await GetTiers(),
+				Members = await GetMembersWithoutMembership()
 			};
 
 			return View(model);
@@ -263,6 +264,16 @@ namespace Fitness_Membership_Tracker.Controllers
 				});
 		}
 
-		#endregion
-	}
+        private async Task<IEnumerable<SelectListItem>> GetMembersWithoutMembership()
+        {
+            return (await _memberService.GetMembersWithoutMembership())
+                .Select(membership => new SelectListItem
+                {
+                    Value = membership.Id.ToString(),
+                    Text = $"Membership #{membership.Id}"
+                });
+        }
+
+        #endregion
+    }
 }

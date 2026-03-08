@@ -73,20 +73,14 @@ namespace Fitness_Membership_Tracker.Controllers
 			var member = await _memberService.GetByNameAsync(User.Identity.Name);
 			var locations = await _locationService.GetAllAsync();
 			var location = locations[Random.Shared.Next(locations.Count)];
-
 			var employeesAtLocation = await _employeeService.GetEmployeesAsync(location.Id, string.Empty);
 
-			Employee? employee = null;
-			if (employeesAtLocation.Any())
-			{
-				employee = employeesAtLocation[Random.Shared.Next(employeesAtLocation.Count)];
-			}
+			Employee? employee = employeesAtLocation[Random.Shared.Next(employeesAtLocation.Count)];
 
 			Membership membership;
+			Membership? existingMembership;
 
 			int? membershipId = member.MembershipId;
-
-			Membership? existingMembership;
 
 			if (membershipId == null)
 				existingMembership = null;
