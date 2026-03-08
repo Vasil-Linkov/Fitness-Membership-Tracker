@@ -4,41 +4,52 @@
     ViewData["Title"] = "Employees";
 }
 
-<h2>Employees</h2>
 
-<p>
-    <a asp-action="CreateEmployee">Create New Employee</a>
-</p>
+<div class="d-flex justify-content-between mb-3">
+    <h2>Employees</h2>
+    <a asp-action="CreateEmployee" class="btn btn-primary">Add Employee</a>
+</div>
 
-<table border="1" cellpadding="5">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Hire Date</th>
-            <th>Salary</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
+<div class="card shadow-sm">
+    <div class="card-body">
 
-    <tbody>
-        @foreach (var employee in Model)
+        @if (!Model.Any())
         {
-            <tr>
-                <td>@employee.FirstName @employee.LastName</td>
-                <td>@employee.Email</td>
-                <td>@employee.PhoneNumber</td>
-                <td>@employee.HireDate.ToShortDateString()</td>
-                <td>@employee.Salary</td>
-
-                <td>
-                    <form asp-action="DeleteEmployee" method="post">
-                        <input type="hidden" name="id" value="@employee.Id" />
-                        <button type="submit">Delete</button>
-                    </form>
-                </td>
-            </tr>
+            <p class="text-muted">No employees found.</p>
         }
-    </tbody>
-</table>
+        else
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Location</th>
+                        <th>Hire Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var employee in Model)
+                    {
+                        <tr>
+                            <td>@employee.FirstName @employee.LastName</td>
+                            <td>@employee.Email</td>
+                            <td>@employee.Location?.City</td>
+                            <td>@employee.HireDate.ToShortDateString()</td>
+
+                            <td>
+                                <form asp-action="DeleteEmployee" method="post">
+                                    <input type="hidden" name="id" value="@employee.Id" />
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+    </div>
+</div>
