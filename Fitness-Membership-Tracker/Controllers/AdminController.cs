@@ -1,6 +1,6 @@
 ﻿using Fitness_Membership_Tracker.Constants;
-using Fitness_Membership_Tracker.Data.Data.DataModels;
-using Fitness_Membership_Tracker.Data.DataModels;
+using Fitness_Membership_Tracker.HelperClasses;
+using Fitness_Membership_Tracker.Models.AdminViewModels;
 using Fitness_Membership_Tracker.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,150 +8,263 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Fitness_Membership_Tracker.Controllers
 {
-    [Authorize(Roles = Roles.Admin)]
-    public class AdminController : Controller
-    {
-        private readonly IEmployeeService _employeeService;
-        private readonly IMemberService _memberService;
-        private readonly IMembershipService _membershipService;
-        private readonly IPaymentService _paymentService;
-        private readonly ILocationService _locationService;
+	[Authorize(Roles = Roles.Admin)]
+	public class AdminController : Controller
+	{
+		private readonly IEmployeeService _employeeService;
+		private readonly IMemberService _memberService;
+		private readonly IMembershipService _membershipService;
+		private readonly IPaymentService _paymentService;
+		private readonly ILocationService _locationService;
+		private readonly IMembershipTierService _membershipTierService;
 
-        public AdminController(
-            IEmployeeService employeeService,
-            IMemberService memberService,
-            IMembershipService membershipService,
-            IPaymentService paymentService,
-            ILocationService locationService)
-        {
-            _employeeService = employeeService;
-            _memberService = memberService;
-            _membershipService = membershipService;
-            _paymentService = paymentService;
-            _locationService = locationService;
-        }
+		public AdminController(
+			IEmployeeService employeeService,
+			IMemberService memberService,
+			IMembershipService membershipService,
+			IPaymentService paymentService,
+			ILocationService locationService,
+			IMembershipTierService membershipTierService)
+		{
+			_employeeService = employeeService;
+			_memberService = memberService;
+			_membershipService = membershipService;
+			_paymentService = paymentService;
+			_locationService = locationService;
+			_membershipTierService = membershipTierService;
+		}
 
-        public async Task<IActionResult> Dashboard()
-        {
-            var employees = await _employeeService.GetEmployeesAsync(null, null);
-            var members = await _memberService.GetAllAsync();
-            var memberships = await _membershipService.GetAllAsync();
-            var payments = await _paymentService.GetAllAsync();
+		[HttpGet]
+		public async Task<IActionResult> Dashboard()
+		{
+			ViewBag.EmployeeCount = (await _employeeService.GetEmployeesAsync(null, string.Empty)).Count();
+			ViewBag.MemberCount = (await _memberService.GetAllAsync()).Count();
+			ViewBag.MembershipCount = (await _membershipService.GetAllAsync()).Count();
+			ViewBag.PaymentCount = (await _paymentService.GetAllAsync()).Count();
 
-            ViewBag.EmployeeCount = employees.Count;
-            ViewBag.MemberCount = members.Count;
-            ViewBag.MembershipCount = memberships.Count;
-            ViewBag.PaymentCount = payments.Count;
+			return View();
+		}
 
-            return View();
-        }
+		#region Employees
 
-        #region Employees
+		[HttpGet]
+		public async Task<IActionResult> Employees(int? locationId, string? search)
+		{
+			if(search == null)
+				search = string.Empty;
 
-        public async Task<IActionResult> Employees(int? locationId, string search)
-        {
-            var employees = await _employeeService.GetEmployeesAsync(locationId, search);
-            ViewBag.Locations = new SelectList(await _locationService.GetAllAsync(), "Id", "Name");
-            return View(employees);
-        }
+			ViewBag.SelectedLocationId = locationId;
+			ViewBag.Search = search;
+			ViewBag.Locations = await GetLocations();
 
-        public async Task<IActionResult> CreateEmployee()
-        {
-            ViewBag.Locations = new SelectList(await _locationService.GetAllAsync(), "Id", "Name");
-            return View();
-        }
+			var employees = await _employeeService.GetEmployeesAsync(locationId, search);
 
-        [HttpPost]
-        public async Task<IActionResult> CreateEmployee(Employee employee)
-        {
-            if (!ModelState.IsValid)
-                return View(employee);
+			return View(employees);
+		}
 
-            await _employeeService.CreateAsync(employee);
-            return RedirectToAction(nameof(Employees));
-        }
+		[HttpGet]
+		public async Task<IActionResult> CreateEmployee()
+		{
+			var model = new CreateEmployeeAdminViewModel
+			{
+				Locations = await GetLocations()
+			};
 
-        public async Task<IActionResult> DeleteEmployee(int id)
-        {
-            await _employeeService.DeleteAsync(id);
-            return RedirectToAction(nameof(Employees));
-        }
+			return View(model);
+		}
 
-        #endregion
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CreateEmployee(CreateEmployeeAdminViewModel model)
+		{
+			if (!ModelState.IsValid)
+			{
+				model.Locations = await GetLocations();
+				return View(model);
+			}
+			model.Email = model.FirstName + "." + model.LastName + "@gym.com";
+			await _employeeService.CreateAsync(EmployeeMapper.ToEntity(model));
 
-        #region Members
+			return RedirectToAction(nameof(Employees));
+		}
 
-        public async Task<IActionResult> Members()
-        {
-            var members = await _memberService.GetAllAsync();
-            return View(members);
-        }
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteEmployee(int id)
+		{
+			await _employeeService.DeleteAsync(id);
 
-        public async Task<IActionResult> DeleteMember(string id)
-        {
-            await _memberService.DeleteAsync(id);
-            return RedirectToAction(nameof(Members));
-        }
+			return RedirectToAction(nameof(Employees));
+		}
 
-        #endregion
+		#endregion
 
-        #region Memberships
 
-        public async Task<IActionResult> Memberships()
-        {
-            var memberships = await _membershipService.GetAllAsync();
-            return View(memberships);
-        }
+		#region Members
 
-        public IActionResult CreateMembership()
-        {
-            return View();
-        }
+		[HttpGet]
+		public async Task<IActionResult> Members()
+		{
+			var members = await _memberService.GetAllAsync();
+			return View(members);
+		}
 
-        [HttpPost]
-        public async Task<IActionResult> CreateMembership(Membership membership)
-        {
-            if (!ModelState.IsValid)
-                return View(membership);
+		#endregion
 
-            await _membershipService.CreateAsync(membership);
-            return RedirectToAction(nameof(Memberships));
-        }
 
-        public async Task<IActionResult> DeleteMembership(int id)
-        {
-            await _membershipService.DeleteAsync(id);
-            return RedirectToAction(nameof(Memberships));
-        }
+		#region Memberships
 
-        #endregion
+		[HttpGet]
+		public async Task<IActionResult> Memberships()
+		{
+			var memberships = await _membershipService.GetAllAsync();
+			return View(memberships);
+		}
 
-        #region Payments
+		[HttpGet]
+		public async Task<IActionResult> CreateMembership()
+		{
+			var model = new CreateMembershipAdminViewModel
+			{
+				StartDate = DateTime.Now,
+				EndDate = DateTime.Now.AddMonths(1),
+				Locations = await GetLocations(),
+				Tiers = await GetTiers(),
+				Members = await GetMembers()
+			};
 
-        public async Task<IActionResult> Payments()
-        {
-            var payments = await _paymentService.GetAllAsync();
-            return View(payments);
-        }
+			return View(model);
+		}
 
-        public async Task<IActionResult> CreatePayment()
-        {
-            ViewBag.Members = new SelectList(await _memberService.GetAllAsync(), "Id", "Email");
-            ViewBag.Memberships = new SelectList(await _membershipService.GetAllAsync(), "Id", "Name");
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CreateMembership(CreateMembershipAdminViewModel model)
+		{
+			if (!ModelState.IsValid)
+			{
+				model.Locations = await GetLocations();
+				model.Tiers = await GetTiers();
+				model.Members = await GetMembers();
+				return View(model);
+			}
 
-            return View();
-        }
+			await _membershipService.CreateAsync(MembershipMapper.ToEntity(model));
 
-        [HttpPost]
-        public async Task<IActionResult> CreatePayment(Payment payment)
-        {
-            if (!ModelState.IsValid)
-                return View(payment);
+			return RedirectToAction(nameof(Memberships));
+		}
 
-            await _paymentService.CreateAsync(payment);
-            return RedirectToAction(nameof(Payments));
-        }
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteMembership(int id)
+		{
+			await _membershipService.DeleteAsync(id);
 
-        #endregion
-    }
+			return RedirectToAction(nameof(Memberships));
+		}
+
+		#endregion
+
+
+		#region Payments
+
+		[HttpGet]
+		public async Task<IActionResult> Payments()
+		{
+			var payments = await _paymentService.GetAllAsync();
+			return View(payments);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> CreatePayment()
+		{
+			var model = new CreatePaymentAdminViewModel
+			{
+				PaymentDate = DateTime.Now,
+				Employees = await GetEmployees(),
+				Members = await GetMembers(),
+				Memberships = await GetMemberships()
+			};
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CreatePayment(CreatePaymentAdminViewModel model)
+		{
+			if (!ModelState.IsValid)
+			{
+				model.Employees = await GetEmployees();
+				model.Members = await GetMembers();
+				model.Memberships = await GetMemberships();
+				return View(model);
+			}
+
+			await _paymentService.CreateAsync(PaymentMapper.ToEntity(model));
+
+			return RedirectToAction(nameof(Payments));
+		}
+
+		#endregion
+
+
+		/* Since dropdown menues are used in many selections,
+		these helper methods are used to create SelectList
+		for every dropdown in the admin views
+		to make the code more readable.
+		(since i constantly got confused even while writing it)*/
+		#region Dropdown Helpers
+
+		private async Task<IEnumerable<SelectListItem>> GetLocations()
+		{
+			return (await _locationService.GetAllAsync())
+				.Select(location => new SelectListItem
+				{
+					Value = location.Id.ToString(),
+					Text = $"{location.City} - {location.Address}"
+				});
+		}
+
+		private async Task<IEnumerable<SelectListItem>> GetTiers()
+		{
+			return (await _membershipTierService.GetTiersAsync())
+				.Select(tier => new SelectListItem
+				{
+					Value = tier.Id.ToString(),
+					Text = tier.Tier
+				});
+		}
+
+		private async Task<IEnumerable<SelectListItem>> GetMembers()
+		{
+			return (await _memberService.GetAllAsync())
+				.Select(member => new SelectListItem
+				{
+					Value = member.Id,
+					Text = member.Email
+				});
+		}
+
+		private async Task<IEnumerable<SelectListItem>> GetEmployees()
+		{
+			return (await _employeeService.GetEmployeesAsync(null, string.Empty))
+				.Select(employee => new SelectListItem
+				{
+					Value = employee.Id.ToString(),
+					Text = employee.Email
+				});
+		}
+
+		private async Task<IEnumerable<SelectListItem>> GetMemberships()
+		{
+			return (await _membershipService.GetAllAsync())
+				.Select(membership => new SelectListItem
+				{
+					Value = membership.Id.ToString(),
+					Text = $"Membership #{membership.Id}"
+				});
+		}
+
+		#endregion
+	}
 }
