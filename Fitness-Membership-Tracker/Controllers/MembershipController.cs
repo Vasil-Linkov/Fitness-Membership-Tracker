@@ -1,5 +1,5 @@
 ﻿using Fitness_Membership_Tracker.Data;
-using Fitness_Membership_Tracker.Data.Data.DataModels;
+
 using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Models;
 using Fitness_Membership_Tracker.Services.Interfaces;

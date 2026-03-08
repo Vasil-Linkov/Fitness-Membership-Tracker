@@ -1,5 +1,4 @@
 ﻿using System.Reflection.Emit;
-using Fitness_Membership_Tracker.Data.Data.DataModels;
 using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Services;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

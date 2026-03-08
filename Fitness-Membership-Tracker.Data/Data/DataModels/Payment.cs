@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
-using Fitness_Membership_Tracker.Data.Data.DataModels;
+using Fitness_Membership_Tracker.Data.DataModels;
 
 namespace Fitness_Membership_Tracker.Data.DataModels
 {

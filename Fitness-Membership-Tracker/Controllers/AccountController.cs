@@ -1,5 +1,4 @@
-﻿using Fitness_Membership_Tracker.Data.Data.DataModels;
-using Fitness_Membership_Tracker.Data.DataModels;
+﻿using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Models;
 using Fitness_Membership_Tracker.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;

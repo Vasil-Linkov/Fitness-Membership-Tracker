@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Fitness_Membership_Tracker.Data.Data.DataModels;
 
 namespace Fitness_Membership_Tracker.Data.DataModels
 {

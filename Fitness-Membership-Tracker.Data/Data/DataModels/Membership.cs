@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Fitness_Membership_Tracker.Data.DataModels;
 
-namespace Fitness_Membership_Tracker.Data.Data.DataModels
+namespace Fitness_Membership_Tracker.Data.DataModels
 {
 	public class Membership
 	{

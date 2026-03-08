@@ -7,7 +7,7 @@ using Fitness_Membership_Tracker.Data;
 using Fitness_Membership_Tracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Fitness_Membership_Tracker.Data.DataModels;
-using Fitness_Membership_Tracker.Data.Data.DataModels;
+
 
 namespace Fitness_Membership_Tracker.Services.Implementations
 {

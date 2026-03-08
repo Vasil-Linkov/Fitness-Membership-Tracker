@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Fitness_Membership_Tracker.Services.Implementations;
 using Fitness_Membership_Tracker.Services.Interfaces;
 using Fitness_Membership_Tracker.Data.DataModels;
-using Fitness_Membership_Tracker.Data.Data.DataModels;
 using Fitness_Membership_Tracker.Services;
 
 namespace Fitness_Membership_Tracker

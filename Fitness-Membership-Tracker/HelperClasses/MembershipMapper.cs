@@ -1,4 +1,4 @@
-﻿using Fitness_Membership_Tracker.Data.Data.DataModels;
+﻿using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Models.AdminViewModels;
 
 namespace Fitness_Membership_Tracker.HelperClasses
