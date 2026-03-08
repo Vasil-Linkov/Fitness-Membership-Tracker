@@ -1,47 +1,66 @@
 ﻿@model CreateEmployeeAdminViewModel
 
-<h2>Create Employee</h2>
+@{
+    ViewData["Title"] = "Admin - Create Employee";
+}
 
-<form method="post">
+<div class="container mt-4">
+    <div class="mb-3">
+        <h2 class="mb-1">Create Employee</h2>
+        <p class="text-muted mb-0">Add a new employee to the system.</p>
+    </div>
 
-	<div>
-		<label>First Name</label>
-		<input asp-for="FirstName" />
-		<span asp-validation-for="FirstName"></span>
-	</div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="CreateEmployee" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-	<div>
-		<label>Last Name</label>
-		<input asp-for="LastName" />
-		<span asp-validation-for="LastName"></span>
-	</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="FirstName" class="form-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
 
-	<div>
-		<label>Hire Date</label>
-		<input asp-for="HireDate" type="date" />
-	</div>
+                    <div class="col-md-6">
+                        <label asp-for="LastName" class="form-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
 
-	<div>
-		<label>Salary</label>
-		<input asp-for="Salary" />
-	</div>
+                    <div class="col-md-6">
+                        <label asp-for="HireDate" class="form-label"></label>
+                        <input asp-for="HireDate" type="date" class="form-control" />
+                        <span asp-validation-for="HireDate" class="text-danger"></span>
+                    </div>
 
-	<input type="hidden" asp-for="Email" value="@(Model.FirstName).@(Model.LastName)@@gym.com" />
+                    <div class="col-md-6">
+                        <label asp-for="Salary" class="form-label"></label>
+                        <input asp-for="Salary" class="form-control" />
+                        <span asp-validation-for="Salary" class="text-danger"></span>
+                    </div>
 
-	<div>
-		<label>Phone</label>
-		<input asp-for="PhoneNumber" />
-	</div>
+                    <div class="col-md-6">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
 
-	<div>
-		<label>Location</label>
-		<select asp-for="LocationId" asp-items="Model.Locations"></select>
-	</div>
+                    <div class="col-md-6">
+                        <label asp-for="LocationId" class="form-label">Location</label>
+                        <select asp-for="LocationId" asp-items="Model.Locations" class="form-select">
+                            <option value="">Select location</option>
+                        </select>
+                        <span asp-validation-for="LocationId" class="text-danger"></span>
+                    </div>
+                </div>
 
-	<input type="hidden" asp-for="Locations" value="@Model.Locations" />
-
-	<button type="submit">Create</button>
-
-</form>
-
-<a asp-action="Employees">Back</a>
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <a asp-action="Employees" class="btn btn-secondary">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
