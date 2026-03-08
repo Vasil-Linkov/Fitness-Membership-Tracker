@@ -2,6 +2,7 @@
 using Fitness_Membership_Tracker.Data.Data.DataModels;
 using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Models;
+using Fitness_Membership_Tracker.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,26 +10,36 @@ namespace Fitness_Membership_Tracker.Controllers
 {
     public class MembershipController : Controller
     {
-        ApplicationDbContext _context;
+		private readonly IMemberService _memberService;
+		private readonly IMembershipService _membershipService;
+        private readonly IMembershipTierService _membershipTierService;
+        private readonly ILocationService _locationService;
+        private readonly IEmployeeService _employeeService;
+        private readonly IPaymentService _paymentService;
 
-        public MembershipController(ApplicationDbContext context)
+		public MembershipController(
+            IMembershipService membershipService,
+            IMemberService memberService,
+            IMembershipTierService membershipTierService,
+            ILocationService locationService,
+            IEmployeeService employeeService,
+            IPaymentService paymentService)
         {
-            _context = context;
+            _membershipService = membershipService;
+            _memberService = memberService;
+            _membershipTierService = membershipTierService;
+            _locationService = locationService;
+            _employeeService = employeeService;
+            _paymentService = paymentService;
         }
 
         [HttpGet]
         public async Task<IActionResult> YourMembership()
         {
+            var user = await _memberService.GetByNameAsync(User.Identity.Name);
 
-            var membershipViewModel = await _context.Members
-                .Include(m => m.Membership)
-                .ThenInclude(m => m.Member)
-                .Where(m => m.UserName == User.Identity.Name)
-                .Select(m => new YourMembershipViewModel
-                {
-                    Membership = m.Membership
-                })
-                .FirstOrDefaultAsync(); 
+            var membershipViewModel = await _membershipService.GetMembershipByMember(user);
+            
 
             if (membershipViewModel == null)
             {
@@ -38,33 +49,30 @@ namespace Fitness_Membership_Tracker.Controllers
             return View(membershipViewModel);
         }
 
-        public IActionResult BuyNewMembership()
+        public async Task<IActionResult> BuyNewMembership()
         {
             var membershipTiers = new BuyNewMembershipViewModel()
             {
-                MembershipTiers = _context.MembershipTiers.ToList()
+                MembershipTiers = await _membershipTierService.GetTiersAsync()
 			};
 
 			return View(membershipTiers);
 		}
 
         [HttpPost]
-        public IActionResult PurchaseMembership(int membershipTierId)
+        public async Task<IActionResult> PurchaseMembership(int membershipTierId)
         {
-            var membershipTier = _context.MembershipTiers.Find(membershipTierId);
+            var membershipTier = await _membershipTierService.GetByIdAsync(membershipTierId);
 
             if (membershipTier != null && User.Identity != null && User.Identity.IsAuthenticated)
             {
-                var member = _context.Members
-                    .FirstOrDefault(m => m.UserName == User.Identity.Name);
+                var member = await _memberService.GetByIdAsync(User.Identity.Name);
 
-                var locations = _context.Locations.ToList();
+				var locations = await _locationService.GetAllAsync();
 
                 var location = locations[Random.Shared.Next(0, locations.Count)];
 
-                var employeesAtLocation = _context.Employees
-                    .Where(e => e.LocationId == location.Id)
-                    .ToList();
+                var employeesAtLocation = await _employeeService.GetEmployeesAsync(location.Id, string.Empty);
 
                 Employee employee = null;
 
@@ -84,8 +92,7 @@ namespace Fitness_Membership_Tracker.Controllers
                     MemberId = member.Id
                 };
 
-                _context.Memberships.Add(newMembership);
-                _context.SaveChanges();
+                await _membershipService.CreateAsync(newMembership);
 
                 var payment = new Payment()
                 {
@@ -98,12 +105,11 @@ namespace Fitness_Membership_Tracker.Controllers
                     EmployeeId = employee?.Id
                 };
 
-                _context.Payments.Add(payment);
-                _context.SaveChanges();
+                await _paymentService.CreateAsync(payment);
 
                 member.MembershipId = newMembership.Id;
-
-                _context.SaveChanges();
+                await _memberService.UpdateAsync(member);
+                
             }
             else
             {
