@@ -7,5 +7,7 @@ namespace Fitness_Membership_Tracker.Models
     {
 
         public Membership? Membership { get; set; }
+
+        public List<Payment> Payments { get; set; } = new List<Payment>();
     }
 }

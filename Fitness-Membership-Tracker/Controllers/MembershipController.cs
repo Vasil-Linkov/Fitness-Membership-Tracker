@@ -43,10 +43,12 @@ namespace Fitness_Membership_Tracker.Controllers
 			}
 
 			var membership = await _membershipService.GetMembershipByMember(member);
+            var payments = await _paymentService.GetByMemberIdAsync(member.Id);
 
-			var model = new YourMembershipViewModel
+            var model = new YourMembershipViewModel
 			{
-				Membership = membership
+				Membership = membership,
+				Payments = payments
 			};
 
 			return View(model);
