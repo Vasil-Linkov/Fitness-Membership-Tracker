@@ -22,5 +22,8 @@ namespace Fitness_Membership_Tracker.Services.Implementations
 
         public async Task<List<MembershipTier>> GetTiersAsync()
             => await _context.MembershipTiers.AsNoTracking().ToListAsync();
+
+        public async Task<MembershipTier?> GetByIdAsync(int id)
+            => await _context.MembershipTiers.AsNoTracking().FirstOrDefaultAsync(mt => mt.Id == id);
     }
 }

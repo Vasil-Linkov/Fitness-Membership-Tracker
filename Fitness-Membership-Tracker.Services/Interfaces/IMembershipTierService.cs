@@ -11,5 +11,6 @@ namespace Fitness_Membership_Tracker.Services.Interfaces
     {
 
         public Task<List<MembershipTier>> GetTiersAsync();
+        public Task<MembershipTier?> GetByIdAsync(int id);
     }
 }

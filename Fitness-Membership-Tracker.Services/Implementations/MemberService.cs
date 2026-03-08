@@ -32,6 +32,13 @@ namespace Fitness_Membership_Tracker.Services.Implementations
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
 
+
+        public async Task<Member?> GetByNameAsync(string name)
+			=> await _context.Users
+				.Include(m => m.Membership)
+				.AsNoTracking()
+				.FirstOrDefaultAsync(m => m.UserName == name);
+
         public async Task UpdateAsync(Member member)
         {
             _context.Users.Update(member);
