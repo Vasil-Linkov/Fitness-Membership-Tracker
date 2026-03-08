@@ -30,7 +30,7 @@
                 <td>@membership.EndDate.ToShortDateString()</td>
                 <td>@membership.Location?.City</td>
                 <td>@membership.MembershipTier?.Tier</td>
-                <td>@membership.Member?.Email</td>
+                @*td>@membership.Member?.Email</td>*@
 
                 <td>
                     <form asp-action="DeleteMembership" method="post">

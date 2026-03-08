@@ -27,7 +27,7 @@ public class MembershipService : IMembershipService
 
     public async Task<Membership?> GetMembershipByMember(Member member)
     {
-		return await _context.Memberships.AsNoTracking().FirstOrDefaultAsync(m => m.MemberId == member.Id);
+		return await _context.Memberships.AsNoTracking().FirstOrDefaultAsync();
 	}
 
     public async Task CreateAsync(Membership membership)

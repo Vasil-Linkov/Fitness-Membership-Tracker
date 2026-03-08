@@ -129,8 +129,7 @@ namespace Fitness_Membership_Tracker.Controllers
 				StartDate = DateTime.Now,
 				EndDate = DateTime.Now.AddMonths(1),
 				Locations = await GetLocations(),
-				Tiers = await GetTiers(),
-				Members = await GetMembers()
+				Tiers = await GetTiers()
 			};
 
 			return View(model);
@@ -144,7 +143,6 @@ namespace Fitness_Membership_Tracker.Controllers
 			{
 				model.Locations = await GetLocations();
 				model.Tiers = await GetTiers();
-				model.Members = await GetMembers();
 				return View(model);
 			}
 
