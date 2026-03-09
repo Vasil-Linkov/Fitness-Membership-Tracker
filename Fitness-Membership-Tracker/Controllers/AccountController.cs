@@ -27,6 +27,8 @@ namespace Fitness_Membership_Tracker.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl)
         {
             if (!ModelState.IsValid)
@@ -62,6 +64,7 @@ namespace Fitness_Membership_Tracker.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -76,6 +79,7 @@ namespace Fitness_Membership_Tracker.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
 			if (!ModelState.IsValid)
