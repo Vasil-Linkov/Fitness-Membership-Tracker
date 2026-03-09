@@ -28,7 +28,8 @@ namespace Fitness_Membership_Tracker.Services.Implementations
 			return await _context.Memberships
 				.Include(m => m.Location)
 				.Include(m => m.MembershipTier)
-				.FirstOrDefaultAsync(m => m.Id == id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id);
 		}
 
 		public async Task<Membership?> GetMembershipByMember(Member member)
@@ -41,7 +42,8 @@ namespace Fitness_Membership_Tracker.Services.Implementations
 			return await _context.Memberships
 				.Include(m => m.Location)
 				.Include(m => m.MembershipTier)
-				.FirstOrDefaultAsync(m => m.Id == member.MembershipId);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == member.MembershipId);
 		}
 
 		public async Task<Membership?> GetByIdIncludingDeletedAsync(int id)
@@ -50,7 +52,8 @@ namespace Fitness_Membership_Tracker.Services.Implementations
 				.IgnoreQueryFilters()
 				.Include(m => m.Location)
 				.Include(m => m.MembershipTier)
-				.FirstOrDefaultAsync(m => m.Id == id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id);
 		}
 
 		public async Task CreateAsync(Membership membership)

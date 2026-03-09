@@ -19,14 +19,10 @@ namespace Fitness_Membership_Tracker.Services.Implementations
             _context = context;
         }
 
-        public async Task<List<Location>> GetAllAsync()
-        {
-            return await _context.Locations.AsNoTracking().ToListAsync();
-        }
+        public async Task<List<Location>> GetAllAsync() 
+            => await _context.Locations.AsNoTracking().ToListAsync();
 
-        public Task<Location?> GetByIdAsync(int id)
-        {
-            return _context.Locations.AsNoTracking().FirstOrDefaultAsync(l => l.Id == id);
-        }
+        public async Task<Location?> GetByIdAsync(int id) 
+            => await _context.Locations.AsNoTracking().FirstOrDefaultAsync(l => l.Id == id);
     }
 }

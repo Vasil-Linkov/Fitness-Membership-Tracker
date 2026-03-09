@@ -18,7 +18,8 @@ namespace Fitness_Membership_Tracker.Services.Implementations
 		{
 			var query = _context.Employees
 				.Include(e => e.Location)
-				.AsQueryable();
+                .AsNoTracking()
+                .AsQueryable();
 
 			if (locationId.HasValue)
 			{
@@ -44,7 +45,8 @@ namespace Fitness_Membership_Tracker.Services.Implementations
 		{
 			return await _context.Employees
 				.Include(e => e.Location)
-				.FirstOrDefaultAsync(e => e.Id == id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Id == id);
 		}
 
 		public async Task CreateAsync(Employee employee)

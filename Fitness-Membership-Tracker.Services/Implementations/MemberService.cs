@@ -28,7 +28,8 @@ namespace Fitness_Membership_Tracker.Services.Implementations
 			return await _context.Members
 				.Include(m => m.Membership)
 				.Include(m => m.Payments)
-				.FirstOrDefaultAsync(m => m.Id == id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == id);
 		}
 
 		public async Task<Member?> GetByNameAsync(string username)
@@ -39,7 +40,8 @@ namespace Fitness_Membership_Tracker.Services.Implementations
 				.Include(m => m.Membership)
 				.ThenInclude(m => m.MembershipTier)
 				.Include(m => m.Payments)
-				.FirstOrDefaultAsync(m => m.UserName == username);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.UserName == username);
 		}
 
 		public async Task<List<Member>?> GetMembersWithoutMembership()

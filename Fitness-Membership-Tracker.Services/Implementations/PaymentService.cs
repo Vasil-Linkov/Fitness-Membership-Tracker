@@ -19,6 +19,7 @@ public class PaymentService : IPaymentService
         return await _context.Payments
             .Include(p => p.Member)
             .Include(p => p.Membership)
+            .AsNoTracking()
             .ToListAsync();
     }
 
@@ -27,6 +28,7 @@ public class PaymentService : IPaymentService
         return await _context.Payments
             .Where(p => p.MemberId == memberId)
             .Include(p => p.Membership)
+            .AsNoTracking()
             .ToListAsync();
     }
 
