@@ -1,0 +1,78 @@
+@model VisitStatsViewModel
+
+@{
+    ViewData["Title"] = "Admin - Visits";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Visits</h2>
+            <p class="text-muted mb-0">Track gym visits over time.</p>
+        </div>
+        <a asp-action="LogVisit" class="btn btn-primary">Log Visit</a>
+    </div>
+
+    <partial name="_VisitStatsPartial" model="Model" />
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="mb-3">Visit Records</h5>
+
+            @if (Model.Visits == null || !Model.Visits.Any())
+            {
+                <p class="text-muted mb-0">No visits found for the selected period.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Date &amp; Time</th>
+                                <th>Member</th>
+                                <th>Location</th>
+                                <th>Membership Tier</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var visit in Model.Visits)
+                            {
+                                <tr>
+                                    <td class="text-muted small">@visit.Id</td>
+                                    <td>@visit.VisitDate.ToString("dd.MM.yyyy HH:mm")</td>
+                                    <td>@visit.Member?.Email</td>
+                                    <td>@visit.Location?.City — @visit.Location?.Address</td>
+                                    <td>
+                                        @if (visit.Membership?.MembershipTier != null)
+                                        {
+                                            <span class="badge bg-primary">
+                                                @visit.Membership.MembershipTier.Tier
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <form asp-action="DeleteVisit" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@visit.Id" />
+                                            <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Delete this visit record?');">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

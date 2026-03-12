@@ -1,0 +1,93 @@
+@model VisitStatsViewModel
+
+@{
+    var labels  = Model.DailyVisitCounts.OrderBy(kv => kv.Key).Select(kv => kv.Key.ToString("dd MMM")).ToList();
+    var values  = Model.DailyVisitCounts.OrderBy(kv => kv.Key).Select(kv => kv.Value).ToList();
+    var chartId = "visitChart_" + Guid.NewGuid().ToString("N").Substring(0, 8);
+}
+
+<form method="get" class="row g-2 align-items-end mb-4">
+    <div class="col-auto">
+        <label class="form-label mb-1 text-muted small">From</label>
+        <input type="date" name="from" value="@Model.From.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label mb-1 text-muted small">To</label>
+        <input type="date" name="to" value="@Model.To.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+    </div>
+</form>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted small mb-1">Total Visits</p>
+                <h3 class="mb-0 fw-bold">@Model.TotalVisits</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted small mb-1">Avg / Day</p>
+                <h3 class="mb-0 fw-bold">@Model.AveragePerDay.ToString("F1")</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted small mb-1">Peak Day</p>
+                <h3 class="mb-0 fw-bold">
+                    @(Model.PeakDay.HasValue ? Model.PeakDay.Value.ToString("dd MMM yyyy") : "—")
+                </h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted small mb-1">Peak Count</p>
+                <h3 class="mb-0 fw-bold">@Model.PeakCount</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h6 class="text-muted mb-3">Visits Per Day</h6>
+        <canvas id="@chartId" height="80"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    (function () {
+        const ctx = document.getElementById('@chartId').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(labels)),
+                datasets: [{
+                    label: 'Visits',
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(values)),
+                    backgroundColor: 'rgba(27, 110, 194, 0.65)',
+                    borderColor:     'rgba(27, 110, 194, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { precision: 0 } }
+                }
+            }
+        });
+    })();
+</script>
