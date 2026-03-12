@@ -1,6 +1,9 @@
 ﻿using Fitness_Membership_Tracker.Constants;
+using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.HelperClasses;
+using Fitness_Membership_Tracker.Models;
 using Fitness_Membership_Tracker.Models.AdminViewModels;
+using Fitness_Membership_Tracker.Services.Implementations;
 using Fitness_Membership_Tracker.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +20,7 @@ namespace Fitness_Membership_Tracker.Controllers
 		private readonly IPaymentService _paymentService;
 		private readonly ILocationService _locationService;
 		private readonly IMembershipTierService _membershipTierService;
+		private readonly IVisitService _visitService;
 
 		public AdminController(
 			IEmployeeService employeeService,
@@ -24,7 +28,8 @@ namespace Fitness_Membership_Tracker.Controllers
 			IMembershipService membershipService,
 			IPaymentService paymentService,
 			ILocationService locationService,
-			IMembershipTierService membershipTierService)
+			IMembershipTierService membershipTierService,
+			IVisitService visitService)
 		{
 			_employeeService = employeeService;
 			_memberService = memberService;
@@ -32,6 +37,7 @@ namespace Fitness_Membership_Tracker.Controllers
 			_paymentService = paymentService;
 			_locationService = locationService;
 			_membershipTierService = membershipTierService;
+			_visitService = visitService;
 		}
 
 		[HttpGet]
@@ -42,7 +48,11 @@ namespace Fitness_Membership_Tracker.Controllers
 			ViewBag.MembershipCount = (await _membershipService.GetAllAsync()).Count();
 			ViewBag.PaymentCount = (await _paymentService.GetAllAsync()).Count();
 
-			return View();
+            var to = DateTime.Today;
+            var from = to.AddDays(-29);
+            ViewBag.VisitStats = await BuildVisitStatsViewModel(from, to, includeList: false);
+
+            return View();
 		}
 
 		#region Employees
@@ -204,17 +214,74 @@ namespace Fitness_Membership_Tracker.Controllers
 			return RedirectToAction(nameof(Payments));
 		}
 
-		#endregion
+        #endregion
+
+        #region Visits
+
+        [HttpGet]
+        public async Task<IActionResult> Visits(DateTime? from, DateTime? to)
+        {
+            var dateTo = to ?? DateTime.Today;
+            var dateFrom = from ?? dateTo.AddDays(-29);
+
+            var model = await BuildVisitStatsViewModel(dateFrom, dateTo, includeList: true);
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> LogVisit()
+        {
+            var model = new LogVisitAdminViewModel
+            {
+                Members = await GetMembers(),
+                Locations = await GetLocations(),
+                Memberships = await GetMemberships()
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LogVisit(LogVisitAdminViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Members = await GetMembers();
+                model.Locations = await GetLocations();
+                model.Memberships = await GetMemberships();
+                return View(model);
+            }
+
+            var visit = new Visit
+            {
+                MemberId = model.MemberId,
+                LocationId = model.LocationId,
+                MembershipId = model.MembershipId
+            };
+
+            await _visitService.CreateAsync(visit);
+            return RedirectToAction(nameof(Visits));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteVisit(int id)
+        {
+            await _visitService.DeleteAsync(id);
+            return RedirectToAction(nameof(Visits));
+        }
+
+        #endregion
 
 
-		/* Since dropdown menues are used in many selections,
+        /* Since dropdown menues are used in many selections,
 		these helper methods are used to create SelectList
 		for every dropdown in the admin views
 		to make the code more readable.
 		(since i constantly got confused even while writing it)*/
-		#region Dropdown Helpers
+        #region Dropdown Helpers
 
-		private async Task<IEnumerable<SelectListItem>> GetLocations()
+        private async Task<IEnumerable<SelectListItem>> GetLocations()
 		{
 			return (await _locationService.GetAllAsync())
 				.Select(location => new SelectListItem
@@ -272,6 +339,36 @@ namespace Fitness_Membership_Tracker.Controllers
                     Value = membership.Id.ToString(),
                     Text = $"Membership #{membership.Id}"
                 });
+        }
+
+        #endregion
+
+        #region Visit view model creator
+
+        private async Task<VisitStatsViewModel> BuildVisitStatsViewModel(DateTime from, DateTime to, bool includeList)
+        {
+            var dailyCounts = await _visitService.GetDailyVisitCountsAsync(from, to.AddDays(1).AddTicks(-1));
+
+            int total = dailyCounts.Values.Sum();
+            int days = Math.Max(1, (int)(to - from).TotalDays + 1);
+            double avg = (double)total / days;
+            var peak = dailyCounts.OrderByDescending(kv => kv.Value).FirstOrDefault();
+
+            var model = new VisitStatsViewModel
+            {
+                From = from,
+                To = to,
+                DailyVisitCounts = dailyCounts,
+                TotalVisits = total,
+                AveragePerDay = avg,
+                PeakCount = peak.Value,
+                PeakDay = dailyCounts.Any() ? peak.Key : null
+            };
+
+            if (includeList)
+                model.Visits = await _visitService.GetByDateRangeAsync(from, to.AddDays(1).AddTicks(-1));
+
+            return model;
         }
 
         #endregion
