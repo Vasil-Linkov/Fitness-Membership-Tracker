@@ -47,6 +47,7 @@ namespace Fitness_Membership_Tracker
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<ILocationService, LocationService>();
             builder.Services.AddScoped<IMembershipTierService, MembershipTierService>();
+            builder.Services.AddScoped<IVisitService, VisitService>();
 
 
 
