@@ -1,0 +1,55 @@
+@model LogVisitAdminViewModel
+
+@{
+    ViewData["Title"] = "Admin - Log Visit";
+}
+
+<div class="container mt-4">
+    <div class="mb-3">
+        <h2 class="mb-1">Log Visit</h2>
+        <p class="text-muted mb-0">Record a new gym visit.</p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="LogVisit" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="MemberId" class="form-label">Member</label>
+                        <select asp-for="MemberId" asp-items="Model.Members" class="form-select">
+                            <option value="">Select member</option>
+                        </select>
+                        <span asp-validation-for="MemberId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="LocationId" class="form-label">Location</label>
+                        <select asp-for="LocationId" asp-items="Model.Locations" class="form-select">
+                            <option value="">Select location</option>
+                        </select>
+                        <span asp-validation-for="LocationId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="MembershipId" class="form-label">Membership (optional)</label>
+                        <select asp-for="MembershipId" asp-items="Model.Memberships" class="form-select">
+                            <option value="">None</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Log Visit</button>
+                    <a asp-action="Visits" class="btn btn-secondary">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
