@@ -21,6 +21,7 @@ namespace Fitness_Membership_Tracker.Controllers
 		private readonly ILocationService _locationService;
 		private readonly IMembershipTierService _membershipTierService;
 		private readonly IVisitService _visitService;
+		private readonly ITrainerService _trainerService;
 
 		public AdminController(
 			IEmployeeService employeeService,
@@ -29,7 +30,8 @@ namespace Fitness_Membership_Tracker.Controllers
 			IPaymentService paymentService,
 			ILocationService locationService,
 			IMembershipTierService membershipTierService,
-			IVisitService visitService)
+			IVisitService visitService,
+			ITrainerService trainerService)
 		{
 			_employeeService = employeeService;
 			_memberService = memberService;
@@ -38,6 +40,7 @@ namespace Fitness_Membership_Tracker.Controllers
 			_locationService = locationService;
 			_membershipTierService = membershipTierService;
 			_visitService = visitService;
+			_trainerService = trainerService;
 		}
 
 		[HttpGet]
@@ -47,6 +50,7 @@ namespace Fitness_Membership_Tracker.Controllers
 			ViewBag.MemberCount = (await _memberService.GetAllAsync()).Count();
 			ViewBag.MembershipCount = (await _membershipService.GetAllAsync()).Count();
 			ViewBag.PaymentCount = (await _paymentService.GetAllAsync()).Count();
+            ViewBag.TrainerCount = (await _trainerService.GetTrainersAsync(null, string.Empty)).Count();
 
             var to = DateTime.Today;
             var from = to.AddDays(-29);
@@ -107,12 +111,64 @@ namespace Fitness_Membership_Tracker.Controllers
 			return RedirectToAction(nameof(Employees));
 		}
 
-		#endregion
+        #endregion
 
 
-		#region Members
+        #region Trainers
 
-		[HttpGet]
+        [HttpGet]
+        public async Task<IActionResult> Trainers(int? locationId, string? search)
+        {
+            search ??= string.Empty;
+            ViewBag.SelectedLocationId = locationId;
+            ViewBag.Search = search;
+            ViewBag.Locations = await GetLocations();
+
+            var trainers = await _trainerService.GetTrainersAsync(locationId, search);
+            return View(trainers);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateTrainer()
+        {
+            var model = new CreateTrainerAdminViewModel
+            {
+                HireDate = DateTime.Today,
+                Locations = await GetLocations()
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateTrainer(CreateTrainerAdminViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Locations = await GetLocations();
+                return View(model);
+            }
+
+            var trainer = TrainerMapper.ToEntity(model);
+            trainer.Email = $"{model.FirstName}.{model.LastName}@gym.com";
+            await _trainerService.CreateAsync(trainer);
+            return RedirectToAction(nameof(Trainers));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteTrainer(int id)
+        {
+            await _trainerService.DeleteAsync(id);
+            return RedirectToAction(nameof(Trainers));
+        }
+
+        #endregion
+
+
+        #region Members
+
+        [HttpGet]
 		public async Task<IActionResult> Members()
 		{
 			var members = await _memberService.GetAllAsync();
