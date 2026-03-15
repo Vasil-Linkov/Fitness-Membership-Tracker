@@ -21,6 +21,7 @@ namespace Fitness_Membership_Tracker.Data
         public DbSet<Employee> Employees { get; set; }
         public DbSet<LocationMembership> LocationMemberships { get; set; }
         public DbSet<Visit> Visits { get; set; }
+        public DbSet<Trainer> Trainers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -33,6 +34,7 @@ namespace Fitness_Membership_Tracker.Data
             builder.Entity<Location>().HasData(DBSeeding.SeedLocations());
             builder.Entity<MembershipTier>().HasData(DBSeeding.SeedMembershipTiers());
             builder.Entity<Employee>().HasData(DBSeeding.SeedEmployees());
+            builder.Entity<Trainer>().HasData(DBSeeding.SeedTrainers());
 
 
             builder.Entity<Employee>().HasQueryFilter(e => !e.IsDeleted);
@@ -41,6 +43,7 @@ namespace Fitness_Membership_Tracker.Data
             builder.Entity<Payment>().HasQueryFilter(p => !p.IsDeleted);
 			builder.Entity<Location>().HasQueryFilter(p => !p.IsDeleted);
             builder.Entity<Visit>().HasQueryFilter(v => !v.IsDeleted);
+            builder.Entity<Trainer>().HasQueryFilter(t => !t.IsDeleted);
 
         }
     }

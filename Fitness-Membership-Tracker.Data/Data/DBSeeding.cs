@@ -188,7 +188,121 @@ namespace Fitness_Membership_Tracker.Services
 
 			return employees;
 		}
-
+        public static List<Trainer> SeedTrainers()
+        {
+            return new List<Trainer>
+            {
+                new Trainer 
+				{ 
+					Id = 1,  
+					FirstName = "Maria",  
+					LastName = "Ivanova",    
+					Email = "Maria.Ivanova@gym.com",   
+					PhoneNumber = "0881000001",
+					Specialization = "Yoga",     
+					HireDate = new DateTime(2021, 3, 15),
+					Salary = 1600m, LocationId = 1 
+				},
+                new Trainer 
+				{
+					Id = 2,
+					FirstName = "Georgi",   
+					LastName = "Petrov",   
+					Email = "Georgi.Petrov@gym.com", 
+					PhoneNumber = "0881000002",
+					Specialization = "Personal Training",   
+					HireDate = new DateTime(2020, 7, 1), 
+					Salary = 1800m, LocationId = 1
+				},
+                new Trainer 
+				{ 
+					Id = 3,  
+					FirstName = "Elena",  
+					LastName = "Dimitrova",  
+					Email = "Elena.Dimitrova@gym.com",  
+					PhoneNumber = "0881000003",
+					Specialization = "Pilates",            
+					HireDate = new DateTime(2022, 1, 10),
+					Salary = 1550m, LocationId = 2 
+				},
+                new Trainer 
+				{ 
+					Id = 4, 
+					FirstName = "Nikola", 
+					LastName = "Hristov",    
+					Email = "Nikola.Hristov@gym.com",  
+					PhoneNumber = "0881000004",
+					Specialization = "CrossFit",   
+					HireDate = new DateTime(2019, 5, 20),
+					Salary = 1900m, LocationId = 2
+				},
+                new Trainer 
+				{
+					Id = 5, 
+					FirstName = "Viktoria",
+					LastName = "Stoyanova", 
+					Email = "Viktoria.Stoyanova@gym.com", 
+					PhoneNumber = "0881000005", 
+					Specialization = "Group Fitness",       
+					HireDate = new DateTime(2021, 9, 3), 
+					Salary = 1650m, LocationId = 3 
+				},
+                new Trainer 
+				{
+					Id = 6, 
+					FirstName = "Stefan",   
+					LastName = "Vasilev",    
+					Email = "Stefan.Vasilev@gym.com", 
+					PhoneNumber = "0881000006", 
+					Specialization = "Strength & Conditioning",
+					HireDate = new DateTime(2020, 2, 14), 
+					Salary = 1750m, LocationId = 3 
+				},
+                new Trainer 
+				{ 
+					Id = 7, 
+					FirstName = "Katerina", 
+					LastName = "Nikolova",   
+					Email = "Katerina.Nikolova@gym.com",
+					PhoneNumber = "0881000007",
+					Specialization = "Nutrition",         
+					HireDate = new DateTime(2023, 4, 5), 
+					Salary = 1500m, LocationId = 4 
+				},
+                new Trainer 
+				{ 
+					Id = 8, 
+					FirstName = "Hristo",  
+					LastName = "Todorov",     
+					Email = "Hristo.Todorov@gym.com", 
+					PhoneNumber = "0881000008", 
+					Specialization = "Martial Arts",   
+					HireDate = new DateTime(2018, 11, 30),
+					Salary = 2000m, LocationId = 4 
+				},
+                new Trainer 
+				{ 
+					Id = 9,  
+					FirstName = "Desislava", 
+					LastName = "Angelova",   
+					Email = "Desislava.Angelova@gym.com", 
+					PhoneNumber = "0881000009",
+					Specialization = "Cardio",           
+					HireDate = new DateTime(2022, 6, 22), 
+					Salary = 1580m, LocationId = 1 
+				},
+                new Trainer 
+				{
+					Id = 10, FirstName = "Alexander", 
+					LastName = "Kolev",       
+					Email = "Alexander.Kolev@gym.com", 
+					PhoneNumber = "0881000010", 
+					Specialization = "Swimming",     
+					HireDate = new DateTime(2021, 8, 18),
+					Salary = 1700m, LocationId = 2 
+				}
+            };
+        }
 
 
         public static async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
