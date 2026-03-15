@@ -216,6 +216,7 @@ namespace Fitness_Membership_Tracker.Controllers
 
         #endregion
 
+
         #region Visits
 
         [HttpGet]

@@ -196,13 +196,11 @@ namespace Fitness_Membership_Tracker.Services
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<Member>>();
 
-            // Create Admin role if not exists
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
             }
 
-            // Create default admin user
             var adminEmail = "admin@gym.com";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
 
