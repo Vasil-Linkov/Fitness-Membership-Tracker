@@ -1,0 +1,188 @@
+@model LogWorkoutViewModel
+
+@{
+    ViewData["Title"] = "Log Workout";
+}
+
+<div class="container mt-4">
+    <div class="mb-3">
+        <h2 class="mb-1">Log Today's Workout</h2>
+        <p class="text-muted mb-0">Record the exercises you completed in this session.</p>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form asp-action="Log" method="post" id="workoutForm">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-4">
+                    <label asp-for="Notes" class="form-label fw-semibold">Session Notes</label>
+                    <textarea asp-for="Notes" class="form-control" rows="2"
+                              placeholder="e.g. felt strong today, focused on legs..."></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+
+                <h5 class="fw-semibold mb-3">Exercises</h5>
+
+                <div id="exerciseList">
+                    @for (int i = 0; i < Model.Exercises.Count; i++)
+                    {
+                        <div class="exercise-entry card border mb-3" data-index="@i">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0 fw-semibold text-muted">Exercise <span class="exercise-number">@(i + 1)</span></h6>
+                                    <button type="button" class="btn btn-sm btn-outline-danger remove-exercise"
+                                            style="display: @(i == 0 ? "none" : "inline-block")">
+                                        Remove
+                                    </button>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Exercise Name <span class="text-danger">*</span></label>
+                                        <input name="Exercises[@i].ExerciseName"
+                                               value="@Model.Exercises[i].ExerciseName"
+                                               class="form-control" placeholder="e.g. Bench Press" required />
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <label class="form-label">Sets</label>
+                                        <input name="Exercises[@i].Sets" type="number" min="1" max="100"
+                                               value="@Model.Exercises[i].Sets"
+                                               class="form-control" placeholder="3" />
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <label class="form-label">Reps</label>
+                                        <input name="Exercises[@i].Reps" type="number" min="1" max="10000"
+                                               value="@Model.Exercises[i].Reps"
+                                               class="form-control" placeholder="10" />
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <label class="form-label">Weight (kg)</label>
+                                        <input name="Exercises[@i].WeightKg" type="number" min="0" max="9999" step="0.5"
+                                               value="@Model.Exercises[i].WeightKg"
+                                               class="form-control" placeholder="60" />
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <label class="form-label">Duration (min)</label>
+                                        <input name="Exercises[@i].DurationMinutes" type="number" min="1" max="600"
+                                               value="@Model.Exercises[i].DurationMinutes"
+                                               class="form-control" placeholder="20" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Notes</label>
+                                        <input name="Exercises[@i].Notes"
+                                               value="@Model.Exercises[i].Notes"
+                                               class="form-control" placeholder="e.g. used incline bench" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <button type="button" id="addExercise" class="btn btn-outline-secondary mb-4">
+                    + Add Another Exercise
+                </button>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save Workout</button>
+                    <a asp-action="History" class="btn btn-outline-secondary">View History</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    let exerciseCount = @Model.Exercises.Count;
+
+    document.getElementById('addExercise').addEventListener('click', function () {
+        const i = exerciseCount;
+        const template = `
+        <div class="exercise-entry card border mb-3" data-index="${i}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0 fw-semibold text-muted">Exercise <span class="exercise-number">${i + 1}</span></h6>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-exercise">Remove</button>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Exercise Name <span class="text-danger">*</span></label>
+                        <input name="Exercises[${i}].ExerciseName" class="form-control" placeholder="e.g. Bench Press" required />
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label">Sets</label>
+                        <input name="Exercises[${i}].Sets" type="number" min="1" max="100" class="form-control" placeholder="3" />
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label">Reps</label>
+                        <input name="Exercises[${i}].Reps" type="number" min="1" max="10000" class="form-control" placeholder="10" />
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label">Weight (kg)</label>
+                        <input name="Exercises[${i}].WeightKg" type="number" min="0" max="9999" step="0.5" class="form-control" placeholder="60" />
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <label class="form-label">Duration (min)</label>
+                        <input name="Exercises[${i}].DurationMinutes" type="number" min="1" max="600" class="form-control" placeholder="20" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Notes</label>
+                        <input name="Exercises[${i}].Notes" class="form-control" placeholder="e.g. used incline bench" />
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+        document.getElementById('exerciseList').insertAdjacentHTML('beforeend', template);
+        exerciseCount++;
+        updateRemoveButtons();
+        renumberExercises();
+    });
+
+    document.getElementById('exerciseList').addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-exercise')) {
+            e.target.closest('.exercise-entry').remove();
+            renumberExercises();
+            reindexExercises();
+            updateRemoveButtons();
+        }
+    });
+
+    function renumberExercises() {
+        document.querySelectorAll('.exercise-number').forEach((el, idx) => {
+            el.textContent = idx + 1;
+        });
+    }
+
+    function reindexExercises() {
+        document.querySelectorAll('.exercise-entry').forEach((entry, idx) => {
+            entry.dataset.index = idx;
+            entry.querySelectorAll('input').forEach(input => {
+                input.name = input.name.replace(/Exercises\[\d+\]/, `Exercises[${idx}]`);
+            });
+        });
+        exerciseCount = document.querySelectorAll('.exercise-entry').length;
+    }
+
+    function updateRemoveButtons() {
+        const entries = document.querySelectorAll('.exercise-entry');
+        entries.forEach((entry, idx) => {
+            const btn = entry.querySelector('.remove-exercise');
+            btn.style.display = entries.length === 1 ? 'none' : 'inline-block';
+        });
+    }
+
+    updateRemoveButtons();
+</script>
+}
