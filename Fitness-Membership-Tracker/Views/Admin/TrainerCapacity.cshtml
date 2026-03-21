@@ -1,0 +1,63 @@
+@model UpdateTrainerCapacityViewModel
+
+@{
+    ViewData["Title"] = "Admin - Trainer Capacity";
+}
+
+<div class="container mt-4">
+    <a asp-action="Trainers" class="btn btn-sm btn-outline-secondary mb-3">← Back to Trainers</a>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <h4 class="fw-bold mb-1">Trainee Capacity</h4>
+                    <p class="text-muted mb-4">
+                        Update the maximum number of trainees for
+                        <strong>@Model.TrainerName</strong>.
+                    </p>
+
+                    <div class="alert alert-light border mb-4">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <p class="text-muted small mb-1">Current Trainees</p>
+                                <h3 class="fw-bold mb-0">@Model.CurrentCount</h3>
+                            </div>
+                            <div class="col-6">
+                                <p class="text-muted small mb-1">Current Max</p>
+                                <h3 class="fw-bold mb-0">@Model.MaxTrainees</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="TrainerCapacity" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="TrainerId" />
+                        <input type="hidden" asp-for="TrainerName" />
+                        <input type="hidden" asp-for="CurrentCount" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="MaxTrainees" class="form-label fw-semibold">New Maximum</label>
+                            <input asp-for="MaxTrainees" type="number" min="1" max="100"
+                                   class="form-control form-control-lg text-center" />
+                            <div class="form-text">
+                                Minimum: current trainees (@Model.CurrentCount).
+                                Maximum: 100.
+                            </div>
+                            <span asp-validation-for="MaxTrainees" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Update Capacity</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
