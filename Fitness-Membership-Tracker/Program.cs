@@ -49,6 +49,10 @@ namespace Fitness_Membership_Tracker
             builder.Services.AddScoped<IMembershipTierService, MembershipTierService>();
             builder.Services.AddScoped<IVisitService, VisitService>();
             builder.Services.AddScoped<ITrainerService, TrainerService>();
+            builder.Services.AddScoped<ITrainerScheduleService, TrainerScheduleService>();
+            builder.Services.AddScoped<ITrainerTraineeService, TrainerTraineeService>();
+            builder.Services.AddScoped<ITrainingRequestService, TrainingRequestService>();
+            builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 
 
 

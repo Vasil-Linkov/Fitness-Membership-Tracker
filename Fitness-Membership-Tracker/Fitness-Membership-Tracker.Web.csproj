@@ -29,4 +29,9 @@
     <ProjectReference Include="..\Fitness-Membership-Tracker.Services\Fitness-Membership-Tracker.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Trainer\" />
+    <Folder Include="Views\Workout\" />
+  </ItemGroup>
+
 </Project>
