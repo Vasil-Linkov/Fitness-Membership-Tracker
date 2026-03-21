@@ -13,6 +13,7 @@ namespace Fitness_Membership_Tracker.Data
         {
         }
 
+        //entities related to static data that doesnt change often
         public DbSet<Location> Locations { get; set; }
         public DbSet<MembershipTier> MembershipTiers { get; set; }
         public DbSet<Member> Members { get; set; }
@@ -23,12 +24,23 @@ namespace Fitness_Membership_Tracker.Data
         public DbSet<Visit> Visits { get; set; }
         public DbSet<Trainer> Trainers { get; set; }
 
+        // entities related to dynamic functionality that changes every day(almost)
+        public DbSet<WorkoutLog> WorkoutLogs { get; set; }
+        public DbSet<WorkoutExercise> WorkoutExercises { get; set; }
+        public DbSet<TrainerSchedule> TrainerSchedules { get; set; }
+        public DbSet<TrainingRequest> TrainingRequests { get; set; }
+        public DbSet<TrainerTrainee> TrainerTrainees { get; set; }
+        public DbSet<TrainerCapacity> TrainerCapacities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<LocationMembership>()
                 .HasKey(lm => new {lm.LocationId, lm.MembershipId});
+
+            builder.Entity<TrainerCapacity>()
+                .HasKey(tc => tc.TrainerId);
 
 
             builder.Entity<Location>().HasData(DBSeeding.SeedLocations());
@@ -44,6 +56,7 @@ namespace Fitness_Membership_Tracker.Data
 			builder.Entity<Location>().HasQueryFilter(p => !p.IsDeleted);
             builder.Entity<Visit>().HasQueryFilter(v => !v.IsDeleted);
             builder.Entity<Trainer>().HasQueryFilter(t => !t.IsDeleted);
+            builder.Entity<WorkoutLog>().HasQueryFilter(wl => !wl.IsDeleted);
 
         }
     }
