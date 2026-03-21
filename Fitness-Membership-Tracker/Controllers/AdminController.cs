@@ -22,28 +22,38 @@ namespace Fitness_Membership_Tracker.Controllers
 		private readonly IMembershipTierService _membershipTierService;
 		private readonly IVisitService _visitService;
 		private readonly ITrainerService _trainerService;
+        private readonly ITrainerScheduleService _trainerScheduleService;
+        private readonly ITrainerTraineeService _trainerTraineeService;
+        private readonly ITrainingRequestService _trainingRequestService;
+
 
 		public AdminController(
-			IEmployeeService employeeService,
-			IMemberService memberService,
-			IMembershipService membershipService,
-			IPaymentService paymentService,
-			ILocationService locationService,
-			IMembershipTierService membershipTierService,
-			IVisitService visitService,
-			ITrainerService trainerService)
-		{
-			_employeeService = employeeService;
-			_memberService = memberService;
-			_membershipService = membershipService;
-			_paymentService = paymentService;
-			_locationService = locationService;
-			_membershipTierService = membershipTierService;
-			_visitService = visitService;
-			_trainerService = trainerService;
-		}
+            IEmployeeService employeeService,
+            IMemberService memberService,
+            IMembershipService membershipService,
+            IPaymentService paymentService,
+            ILocationService locationService,
+            IMembershipTierService membershipTierService,
+            IVisitService visitService,
+            ITrainerService trainerService,
+            ITrainerScheduleService trainerScheduleService,
+            ITrainerTraineeService trainerTraineeService,
+            ITrainingRequestService trainingRequestService)
+        {
+            _employeeService = employeeService;
+            _memberService = memberService;
+            _membershipService = membershipService;
+            _paymentService = paymentService;
+            _locationService = locationService;
+            _membershipTierService = membershipTierService;
+            _visitService = visitService;
+            _trainerService = trainerService;
+            _trainerScheduleService = trainerScheduleService;
+            _trainerTraineeService = trainerTraineeService;
+            _trainingRequestService = trainingRequestService;
+        }
 
-		[HttpGet]
+        [HttpGet]
 		public async Task<IActionResult> Dashboard()
 		{
 			ViewBag.EmployeeCount = (await _employeeService.GetEmployeesAsync(null, string.Empty)).Count();
@@ -326,6 +336,95 @@ namespace Fitness_Membership_Tracker.Controllers
         {
             await _visitService.DeleteAsync(id);
             return RedirectToAction(nameof(Visits));
+        }
+
+        #endregion
+
+
+        #region Trainer Schedule & Capacity 
+
+        [HttpGet]
+        public async Task<IActionResult> TrainerSchedule(int trainerId)
+        {
+            var trainer = await _trainerService.GetByIdAsync(trainerId);
+            if (trainer == null) return NotFound();
+
+            var slots = await _trainerScheduleService.GetByTrainerIdAsync(trainerId);
+
+            var vm = new ManageTrainerScheduleViewModel
+            {
+                TrainerId = trainerId,
+                TrainerName = $"{trainer.FirstName} {trainer.LastName}",
+                ExistingSlots = slots
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTrainerSlot(ManageTrainerScheduleViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var trainer = await _trainerService.GetByIdAsync(model.TrainerId);
+                model.TrainerName = trainer != null ? $"{trainer.FirstName} {trainer.LastName}" : string.Empty;
+                model.ExistingSlots = await _trainerScheduleService.GetByTrainerIdAsync(model.TrainerId);
+                return View("TrainerSchedule", model);
+            }
+
+            var slot = new TrainerSchedule
+            {
+                TrainerId = model.TrainerId,
+                DayOfWeek = model.DayOfWeek,
+                StartTime = model.StartTime,
+                EndTime = model.EndTime
+            };
+
+            await _trainerScheduleService.AddSlotAsync(slot);
+            TempData["Success"] = "Schedule slot added.";
+            return RedirectToAction(nameof(TrainerSchedule), new { trainerId = model.TrainerId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveTrainerSlot(int slotId, int trainerId)
+        {
+            await _trainerScheduleService.RemoveSlotAsync(slotId);
+            TempData["Success"] = "Schedule slot removed.";
+            return RedirectToAction(nameof(TrainerSchedule), new { trainerId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TrainerCapacity(int trainerId)
+        {
+            var trainer = await _trainerService.GetByIdAsync(trainerId);
+            if (trainer == null) return NotFound();
+
+            int current = await _trainerTraineeService.GetActiveTraineeCountAsync(trainerId);
+            int max = await _trainerTraineeService.GetMaxTraineesAsync(trainerId);
+
+            var vm = new UpdateTrainerCapacityViewModel
+            {
+                TrainerId = trainerId,
+                TrainerName = $"{trainer.FirstName} {trainer.LastName}",
+                MaxTrainees = max,
+                CurrentCount = current
+            };
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TrainerCapacity(UpdateTrainerCapacityViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            await _trainerTraineeService.UpdateMaxTraineesAsync(model.TrainerId, model.MaxTrainees);
+            TempData["Success"] = $"Capacity updated to {model.MaxTrainees} trainees.";
+            return RedirectToAction(nameof(Trainers));
         }
 
         #endregion
