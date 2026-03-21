@@ -51,6 +51,27 @@
                                     Your Membership
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "Workout" ? "active" : "")"
+                                asp-controller="Workout"
+                                asp-action="History">
+                                Workouts
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "Trainer" && currentAction != "Dashboard" ? "active" : "")"
+                                asp-controller="Trainer"
+                                asp-action="Browse">
+                                Trainers
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "Trainer" && currentAction == "Dashboard" ? "active" : "")" 
+                                asp-controller="Trainer" 
+                                asp-action="Dashboard">
+                                Trainer Panel
+                                </a>
+                            </li>
                         }
                         @if (User.IsInRole(Roles.Admin))
                         {
