@@ -1,0 +1,68 @@
+@model RequestTrainerViewModel
+
+@{
+    ViewData["Title"] = "Request Trainer";
+}
+
+<div class="container mt-4">
+    <div class="mb-3">
+        <a asp-action="Browse" class="btn btn-sm btn-outline-secondary mb-3">← Back to Trainers</a>
+        <h2 class="mb-1">Request a Trainer</h2>
+        <p class="text-muted mb-0">Send a training request to this trainer.</p>
+    </div>
+
+    <div class="row g-4">
+
+        @* Trainer info card *@
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold">
+                        @Model.Trainer.FirstName @Model.Trainer.LastName
+                    </h5>
+                    <span class="badge bg-info text-dark mb-3">@Model.Trainer.Specialization</span>
+                    <p class="mb-1 small text-muted">
+                        📍 @Model.Trainer.Location?.City — @Model.Trainer.Location?.Address
+                    </p>
+                    <p class="mb-1 small text-muted">
+                        📞 @Model.Trainer.PhoneNumber
+                    </p>
+                    <hr />
+                    <p class="text-muted small mb-0">
+                        Your request will be reviewed by the trainer.
+                        You'll be notified when they respond.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        @* Request form *@
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <form asp-action="Request" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="trainerId" value="@Model.Trainer.Id" />
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Message to Trainer
+                                <span class="text-muted fw-normal small">(optional)</span>
+                            </label>
+                            <textarea name="memberMessage" class="form-control" rows="5"
+                                      placeholder="Introduce yourself and describe your fitness goals, current level, what you're hoping to work on, etc."
+                                      maxlength="500"></textarea>
+                            <div class="form-text">Maximum 500 characters.</div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Send Request</button>
+                            <a asp-action="Browse" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

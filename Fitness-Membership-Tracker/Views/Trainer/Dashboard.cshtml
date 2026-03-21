@@ -1,0 +1,201 @@
+@model TrainerDashboardViewModel
+
+@{
+    ViewData["Title"] = "Trainer Dashboard";
+    var dayNames = new[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+}
+
+@if (Model.Trainer == null)
+{
+    <div class="container mt-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body text-center py-5">
+                <h4 class="text-muted mb-2">No Trainer Profile Found</h4>
+                <p class="text-muted mb-0">
+                    Your account is not linked to a trainer profile.
+                    If you believe this is a mistake, please contact an administrator.
+                </p>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Trainer Dashboard</h2>
+            <p class="text-muted mb-0">
+                Welcome, <strong>@Model.Trainer.FirstName @Model.Trainer.LastName</strong>
+                — <span class="badge bg-info text-dark">@Model.Trainer.Specialization</span>
+            </p>
+        </div>
+        <div class="text-end">
+            <span class="text-muted small d-block">Trainees</span>
+            <span class="fw-bold fs-5">@Model.CurrentCount / @Model.MaxTrainees</span>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+
+        @* ── Pending requests ── *@
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-warning bg-opacity-10 border-0">
+                    <h5 class="mb-0 fw-semibold">
+                        Pending Requests
+                        @if (Model.PendingRequests.Any())
+                        {
+                            <span class="badge bg-warning text-dark ms-2">@Model.PendingRequests.Count</span>
+                        }
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (!Model.PendingRequests.Any())
+                    {
+                        <p class="text-muted mb-0">No pending requests at the moment.</p>
+                    }
+                    else
+                    {
+                        @foreach (var req in Model.PendingRequests)
+                        {
+                            <div class="border rounded p-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <strong>@req.Member?.Email</strong>
+                                        <br />
+                                        <span class="text-muted small">
+                                            Requested @req.RequestedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")
+                                        </span>
+                                    </div>
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(req.MemberMessage))
+                                {
+                                    <blockquote class="blockquote-footer small mt-2 mb-3">
+                                        @req.MemberMessage
+                                    </blockquote>
+                                }
+                                <div class="d-flex gap-2">
+                                    <a asp-action="RespondToRequest" asp-route-requestId="@req.Id"
+                                       class="btn btn-sm btn-success">
+                                        Respond
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        @* ── Active trainees ── *@
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success bg-opacity-10 border-0">
+                    <h5 class="mb-0 fw-semibold">
+                        Active Trainees
+                        <span class="badge bg-success ms-2">@Model.CurrentCount</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (!Model.ActiveTrainees.Any())
+                    {
+                        <p class="text-muted mb-0">You have no active trainees yet.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Member</th>
+                                        <th>Since</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var tt in Model.ActiveTrainees)
+                                    {
+                                        <tr>
+                                            <td>@tt.Member?.Email</td>
+                                            <td class="small text-muted">
+                                                @tt.StartDate.ToLocalTime().ToString("dd MMM yyyy")
+                                            </td>
+                                            <td class="text-end">
+                                                <form asp-action="EndTraineeRelationship" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="trainerTraineeId" value="@tt.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                            onclick="return confirm('End relationship with this trainee?');">
+                                                        End
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @* ── Weekly schedule ── *@
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header border-0">
+                    <h5 class="mb-0 fw-semibold">My Weekly Schedule</h5>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Schedule.Any())
+                    {
+                        <p class="text-muted mb-0">
+                            No schedule slots set. Ask an admin to add your availability.
+                        </p>
+                    }
+                    else
+                    {
+                        var grouped = Model.Schedule.GroupBy(s => s.DayOfWeek).OrderBy(g => g.Key);
+                        <div class="row g-2">
+                            @foreach (var group in grouped)
+                            {
+                                <div class="col-sm-6 col-lg-3">
+                                    <div class="border rounded p-2">
+                                        <p class="fw-semibold mb-1 small">@dayNames[group.Key]</p>
+                                        @foreach (var slot in group.OrderBy(s => s.StartTime))
+                                        {
+                                            <span class="badge bg-primary me-1 mb-1">
+                                                @slot.StartTime.ToString(@"hh\:mm") – @slot.EndTime.ToString(@"hh\:mm")
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+}
+
+
