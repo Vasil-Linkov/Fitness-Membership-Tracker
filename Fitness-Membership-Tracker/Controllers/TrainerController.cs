@@ -207,7 +207,7 @@ namespace Fitness_Membership_Tracker.Controllers
             if (trainer == null)
             {
                 TempData["Error"] = "No trainer profile is linked to your account.";
-                return RedirectToAction("Index", "Home");
+                return View(new TrainerDashboardViewModel());
             }
 
             var pending = await _requestService.GetPendingForTrainerAsync(trainer.Id);
