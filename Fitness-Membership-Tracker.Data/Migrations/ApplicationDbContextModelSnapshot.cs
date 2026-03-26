@@ -4,7 +4,6 @@ using Fitness_Membership_Tracker.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fitness_Membership_Tracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260219124202_ChangeOneToManyBEtweenLocationToMembershipAndMemberToPayment")]
-    partial class ChangeOneToManyBEtweenLocationToMembershipAndMemberToPayment
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +22,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Employee", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -69,155 +66,9 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     b.HasIndex("LocationId");
 
                     b.ToTable("Employees");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "Dimitar.Kovachev@gmail.com",
-                            FirstName = "Dimitar",
-                            HireDate = new DateTime(2020, 10, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Kovachev",
-                            LocationId = 1,
-                            PhoneNumber = "9470480998",
-                            Salary = 1594m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Email = "Boris.Kovachev@gmail.com",
-                            FirstName = "Boris",
-                            HireDate = new DateTime(2020, 4, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Kovachev",
-                            LocationId = 1,
-                            PhoneNumber = "0345476011",
-                            Salary = 1494m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Email = "Ivan.Zahariev@gmail.com",
-                            FirstName = "Ivan",
-                            HireDate = new DateTime(2020, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Zahariev",
-                            LocationId = 1,
-                            PhoneNumber = "1627322926",
-                            Salary = 1616m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Email = "Hristo.Zahariev@gmail.com",
-                            FirstName = "Hristo",
-                            HireDate = new DateTime(2020, 11, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Zahariev",
-                            LocationId = 2,
-                            PhoneNumber = "1148835719",
-                            Salary = 1513m
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Email = "Radoslav.Bozhkov@gmail.com",
-                            FirstName = "Radoslav",
-                            HireDate = new DateTime(2020, 3, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Bozhkov",
-                            LocationId = 2,
-                            PhoneNumber = "9233779113",
-                            Salary = 1578m
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Email = "Svetlana.Hristov@gmail.com",
-                            FirstName = "Svetlana",
-                            HireDate = new DateTime(2020, 9, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Hristov",
-                            LocationId = 2,
-                            PhoneNumber = "4399341116",
-                            Salary = 1634m
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Email = "Mihail.Kovachev@gmail.com",
-                            FirstName = "Mihail",
-                            HireDate = new DateTime(2020, 9, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Kovachev",
-                            LocationId = 3,
-                            PhoneNumber = "0294378533",
-                            Salary = 1485m
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Email = "Maria.Zahariev@gmail.com",
-                            FirstName = "Maria",
-                            HireDate = new DateTime(2020, 1, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Zahariev",
-                            LocationId = 3,
-                            PhoneNumber = "1625380876",
-                            Salary = 1534m
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Email = "Maria.Vladimirov@gmail.com",
-                            FirstName = "Maria",
-                            HireDate = new DateTime(2020, 10, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Vladimirov",
-                            LocationId = 3,
-                            PhoneNumber = "4376645777",
-                            Salary = 1682m
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Email = "Alexander.Kolev@gmail.com",
-                            FirstName = "Alexander",
-                            HireDate = new DateTime(2020, 6, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Kolev",
-                            LocationId = 4,
-                            PhoneNumber = "5263430484",
-                            Salary = 1416m
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Email = "Boris.Vasilev@gmail.com",
-                            FirstName = "Boris",
-                            HireDate = new DateTime(2020, 5, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Vasilev",
-                            LocationId = 4,
-                            PhoneNumber = "5434231100",
-                            Salary = 1677m
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Email = "Petar.Kolev@gmail.com",
-                            FirstName = "Petar",
-                            HireDate = new DateTime(2020, 10, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsDeleted = false,
-                            LastName = "Kolev",
-                            LocationId = 4,
-                            PhoneNumber = "3989778318",
-                            Salary = 1595m
-                        });
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Location", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Location", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -246,43 +97,9 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Locations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Address = "бул. Черни връх 47, Младост, 1303",
-                            City = "Sofia",
-                            Country = "Bulgaria",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Address = "ул. Пирин 12, Люлин, 1324",
-                            City = "Sofia",
-                            Country = "Bulgaria",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Address = "ул. Христо Ботев 23, Център, 1000",
-                            City = "Sofia",
-                            Country = "Bulgaria",
-                            IsDeleted = false
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Address = "ул. Васил Левски 45",
-                            City = "Sofia",
-                            Country = "Bulgaria",
-                            IsDeleted = false
-                        });
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.LocationMembership", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.LocationMembership", b =>
                 {
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
@@ -297,7 +114,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     b.ToTable("LocationMemberships");
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Member", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Member", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -373,7 +190,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Membership", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Membership", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -393,9 +210,6 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("MemberId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("MembershipTierId")
                         .HasColumnType("int");
 
@@ -406,14 +220,12 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.HasIndex("MemberId");
-
                     b.HasIndex("MembershipTierId");
 
                     b.ToTable("Memberships");
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.MembershipTier", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.MembershipTier", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -442,47 +254,9 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MembershipTiers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Accessibility = "address",
-                            Description = "Access to gym facilities during staffed hours.",
-                            MaxSessionsPerMonth = 8,
-                            MonthlyPrice = 9.99m,
-                            Tier = "Basic"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Accessibility = "city",
-                            Description = "Access to gym facilities during staffed hours.",
-                            MaxSessionsPerMonth = 12,
-                            MonthlyPrice = 15.99m,
-                            Tier = "Advanced"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Accessibility = "country",
-                            Description = "Access to gym facilities during staffed hours.",
-                            MaxSessionsPerMonth = 18,
-                            MonthlyPrice = 21.99m,
-                            Tier = "elite"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Accessibility = "any",
-                            Description = "Access to gym facilities during staffed hours.",
-                            MaxSessionsPerMonth = 24,
-                            MonthlyPrice = 29.99m,
-                            Tier = "Ultimate"
-                        });
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Payment", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Payment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -528,6 +302,289 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     b.HasIndex("MembershipId");
 
                     b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Trainer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("HireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Salary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Specialization")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("Trainers");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.TrainerCapacity", b =>
+                {
+                    b.Property<int>("TrainerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrainerId"));
+
+                    b.Property<int>("MaxTrainees")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TrainerId1")
+                        .HasColumnType("int");
+
+                    b.HasKey("TrainerId");
+
+                    b.HasIndex("TrainerId1");
+
+                    b.ToTable("TrainerCapacities");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.TrainerSchedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("IsBlocked")
+                        .HasColumnType("bit");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("TrainerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrainerId");
+
+                    b.ToTable("TrainerSchedules");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.TrainerTrainee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MemberId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TrainerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.HasIndex("TrainerId");
+
+                    b.ToTable("TrainerTrainees");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.TrainingRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("MemberId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MemberMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RespondedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TrainerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TrainerResponse")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.HasIndex("TrainerId");
+
+                    b.ToTable("TrainingRequests");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Visit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MemberId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("MembershipId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("VisitDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("MemberId");
+
+                    b.HasIndex("MembershipId");
+
+                    b.ToTable("Visits");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.WorkoutExercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("DurationMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExerciseName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Reps")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Sets")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("WeightKg")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("WorkoutLogId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkoutLogId");
+
+                    b.ToTable("WorkoutExercises");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.WorkoutLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LogDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MemberId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("WorkoutLogs");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -663,25 +720,25 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Employee", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Employee", b =>
                 {
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Location", "Location")
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Location", "Location")
                         .WithMany("Employees")
                         .HasForeignKey("LocationId");
 
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.LocationMembership", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.LocationMembership", b =>
                 {
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Location", "Location")
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Location", "Location")
                         .WithMany("LocationMemberships")
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Membership", "Membership")
-                        .WithMany("LocationMemberships")
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Membership", "Membership")
+                        .WithMany()
                         .HasForeignKey("MembershipId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -691,28 +748,24 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     b.Navigation("Membership");
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Member", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Member", b =>
                 {
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Membership", "Membership")
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Membership", "Membership")
                         .WithMany()
                         .HasForeignKey("MembershipId");
 
                     b.Navigation("Membership");
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Membership", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Membership", b =>
                 {
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Location", "Location")
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Location", "Location")
                         .WithMany()
                         .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Member", "Member")
-                        .WithMany()
-                        .HasForeignKey("MemberId");
-
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.MembershipTier", "MembershipTier")
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.MembershipTier", "MembershipTier")
                         .WithMany()
                         .HasForeignKey("MembershipTierId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -720,22 +773,20 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
                     b.Navigation("Location");
 
-                    b.Navigation("Member");
-
                     b.Navigation("MembershipTier");
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Payment", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Payment", b =>
                 {
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Employee", "Employee")
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId");
 
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Member", "Member")
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Member", "Member")
                         .WithMany("Payments")
                         .HasForeignKey("MemberId");
 
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Membership", "Membership")
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Membership", "Membership")
                         .WithMany()
                         .HasForeignKey("MembershipId");
 
@@ -744,6 +795,122 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                     b.Navigation("Member");
 
                     b.Navigation("Membership");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Trainer", b =>
+                {
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId");
+
+                    b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.TrainerCapacity", b =>
+                {
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Trainer", "Trainer")
+                        .WithMany()
+                        .HasForeignKey("TrainerId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.TrainerSchedule", b =>
+                {
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Trainer", "Trainer")
+                        .WithMany()
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.TrainerTrainee", b =>
+                {
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Trainer", "Trainer")
+                        .WithMany()
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+
+                    b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.TrainingRequest", b =>
+                {
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Trainer", "Trainer")
+                        .WithMany()
+                        .HasForeignKey("TrainerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+
+                    b.Navigation("Trainer");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Visit", b =>
+                {
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Membership", "Membership")
+                        .WithMany()
+                        .HasForeignKey("MembershipId");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("Member");
+
+                    b.Navigation("Membership");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.WorkoutExercise", b =>
+                {
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.WorkoutLog", "WorkoutLog")
+                        .WithMany("Exercises")
+                        .HasForeignKey("WorkoutLogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("WorkoutLog");
+                });
+
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.WorkoutLog", b =>
+                {
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -757,7 +924,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Member", null)
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Member", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -766,7 +933,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Member", null)
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Member", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -781,7 +948,7 @@ namespace Fitness_Membership_Tracker.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Member", null)
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Member", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -790,28 +957,28 @@ namespace Fitness_Membership_Tracker.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Fitness_Membership_Tracker.Data.Data.DataModels.Member", null)
+                    b.HasOne("Fitness_Membership_Tracker.Data.DataModels.Member", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Location", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Location", b =>
                 {
                     b.Navigation("Employees");
 
                     b.Navigation("LocationMemberships");
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Member", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.Member", b =>
                 {
                     b.Navigation("Payments");
                 });
 
-            modelBuilder.Entity("Fitness_Membership_Tracker.Data.Data.DataModels.Membership", b =>
+            modelBuilder.Entity("Fitness_Membership_Tracker.Data.DataModels.WorkoutLog", b =>
                 {
-                    b.Navigation("LocationMemberships");
+                    b.Navigation("Exercises");
                 });
 #pragma warning restore 612, 618
         }
