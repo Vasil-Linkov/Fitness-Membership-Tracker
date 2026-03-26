@@ -36,7 +36,7 @@
                         <tr>
                             <td>@employee.FirstName @employee.LastName</td>
                             <td>@employee.Email</td>
-                            <td>@employee.Location?.City</td>
+                            <td>@employee.Location?.Address, @employee.Location.City</td>
                             <td>@employee.HireDate.ToShortDateString()</td>
 
                             <td>

@@ -102,9 +102,13 @@ namespace Fitness_Membership_Tracker.Controllers
 
 			var result = await _userManager.CreateAsync(user, model.Password);
 
-			if (result.Succeeded)
+            if (result.Succeeded)
             {
-				await _signInManager.SignInAsync(user, isPersistent: false);
+                // auto confirm emails (email confirmation is there for proof of concept)
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                await _userManager.ConfirmEmailAsync(user, token);
+
+                await _signInManager.SignInAsync(user, isPersistent: false);
 				return RedirectToAction("Index", "Home");
 			}
 
