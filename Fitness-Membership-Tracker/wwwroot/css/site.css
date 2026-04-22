@@ -1,159 +1,721 @@
-/* ================================
-   Global Theme Variables
-   ================================ */
+/* ═══════════════════════════════════════════════════════════
+   FITNESS MEMBERSHIP TRACKER — Dark Athletic Theme
+   Inspired by: High-contrast dark gym aesthetic
+   Palette: #0a0a0a bg · #e8192c red accent · #f5f5f5 text · #1a1a1a cards
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap');
 
 :root {
-    /*--color-bg: #0f0f0f;*/
-    --color-surface: #ffffff;
-    --color-text: #111111;
-    --color-muted: #6c757d;
-    --color-gold: #c9a227;
-    --color-gold-hover: #b3921f;
-    --color-red: #c62828;
+    --red:       #e8192c;
+    --red-dark:  #b01020;
+    --red-glow:  rgba(232, 25, 44, 0.25);
+    --bg:        #0a0a0a;
+    --bg2:       #111111;
+    --bg3:       #1a1a1a;
+    --bg4:       #242424;
+    --border:    rgba(255,255,255,0.07);
+    --text:      #f0f0f0;
+    --text-muted:#888;
+    --white:     #ffffff;
+    --shadow-red:0 0 40px rgba(232, 25, 44, 0.15);
 }
 
-/* ================================
-   Page Background
-   ================================ */
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
-    background-color: var(--color-bg);
-    color: var(--color-text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
 }
 
-
-/* ================================
-   Card Styling
-   ================================ */
-
-.card {
-    background-color: var(--color-surface);
-    border-radius: 1rem;
+/* ── Typography ── */
+h1,h2,h3,h4,h5,h6 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
 }
 
-    .card.shadow-lg {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    }
+h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); text-transform: uppercase; }
+h2 { font-size: clamp(1.8rem, 4vw, 3rem);   text-transform: uppercase; }
+h3 { font-size: clamp(1.3rem, 2.5vw, 1.8rem); text-transform: uppercase; }
 
-/* ================================
-   Headings & Text
-   ================================ */
+a { color: var(--red); text-decoration: none; transition: color .2s; }
+a:hover { color: #ff3347; }
 
-h1, h2, h3, h4, h5 {
-    color: black;
-    letter-spacing: 0.5px;
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
+/* ══════════════════════════════════════════
+   NAVBAR
+══════════════════════════════════════════ */
+.navbar {
+    background: rgba(10,10,10,0.97) !important;
+    border-bottom: 1px solid var(--border) !important;
+    backdrop-filter: blur(12px);
+    padding: 0.85rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 30px rgba(0,0,0,0.6);
 }
 
-.text-muted {
-    color: var(--color-muted) !important;
+.navbar-brand {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--white) !important;
+    white-space: normal;
+    word-break: normal;
 }
 
-p, span, li {
-    color: #6c757d;
+.navbar-brand::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--red);
+    border-radius: 50%;
+    margin-right: 10px;
+    vertical-align: middle;
+    box-shadow: 0 0 10px var(--red);
 }
 
-
-/* ================================
-   Form Controls
-   ================================ */
-
-.form-control {
-    border-radius: 0.6rem;
-    border: 1px solid #ced4da;
+.navbar-nav .nav-link {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted) !important;
+    padding: 0.5rem 1rem !important;
+    transition: color .2s, border-bottom .2s;
+    border-bottom: 2px solid transparent;
 }
 
-    .form-control:focus {
-        border-color: var(--color-gold);
-        box-shadow: 0 0 0 0.15rem rgba(201, 162, 39, 0.25);
-    }
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--white) !important;
+    border-bottom-color: var(--red);
+}
 
-/* ================================
-   Primary Buttons (Gold)
-   ================================ */
+.navbar-toggler {
+    border-color: var(--border);
+}
+.navbar-toggler-icon {
+    filter: invert(1);
+}
+
+/* Logout / login buttons in nav */
+.navbar form button,
+.navbar .btn-logout {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.4rem 1.1rem;
+    border: 1px solid var(--red);
+    background: transparent;
+    color: var(--red) !important;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+
+.navbar form button:hover {
+    background: var(--red);
+    color: var(--white) !important;
+}
+
+/* ── Navbar login/register links ── */
+.navbar ul.navbar-nav a[href*="Login"],
+.navbar ul.navbar-nav a[href*="Register"] {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* ══════════════════════════════════════════
+   MAIN CONTENT WRAPPER
+══════════════════════════════════════════ */
+.container {
+    max-width: 1280px;
+}
+
+main {
+    padding-bottom: 4rem;
+    min-height: calc(100vh - 130px);
+}
+
+/* ══════════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════════ */
+.btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 2px;
+    transition: all .2s;
+}
 
 .btn-primary {
-    background-color: var(--color-gold);
-    border-color: var(--color-gold);
-    color: #000;
-    font-weight: 600;
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--white);
+    box-shadow: 0 4px 20px rgba(232, 25, 44, 0.3);
 }
 
-    .btn-primary:hover,
-    .btn-primary:focus {
-        background-color: var(--color-gold-hover);
-        border-color: var(--color-gold-hover);
-        color: #000;
-    }
-
-/* ================================
-   Links
-   ================================ */
-
-a {
-    color: var(--color-gold);
+.btn-primary:hover, .btn-primary:focus {
+    background: var(--red-dark);
+    border-color: var(--red-dark);
+    color: var(--white);
+    box-shadow: 0 6px 30px rgba(232, 25, 44, 0.5);
+    transform: translateY(-1px);
 }
 
-    a:hover {
-        color: var(--color-gold-hover);
-    }
+.btn-outline-primary {
+    border-color: var(--red);
+    color: var(--red);
+    background: transparent;
+}
 
-/* ================================
-   Validation & Errors (Red)
-   ================================ */
+.btn-outline-primary:hover {
+    background: var(--red);
+    color: var(--white);
+    border-color: var(--red);
+}
 
-.text-danger {
-    color: var(--color-red) !important;
+.btn-outline-secondary {
+    border-color: var(--border);
+    color: var(--text-muted);
+    background: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background: var(--bg4);
+    color: var(--text);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.btn-secondary {
+    background: var(--bg4);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background: var(--bg3);
+    border-color: rgba(255,255,255,0.2);
+    color: var(--white);
+}
+
+.btn-danger {
+    background: transparent;
+    border-color: #e8192c;
+    color: #e8192c;
+}
+
+.btn-danger:hover {
+    background: #e8192c;
+    color: var(--white);
+}
+
+.btn-sm {
+    padding: 0.3rem 0.85rem;
+    font-size: 0.78rem;
+}
+
+.btn-lg {
+    padding: 0.85rem 2.5rem;
+    font-size: 1rem;
+}
+
+/* ══════════════════════════════════════════
+   CARDS
+══════════════════════════════════════════ */
+.card {
+    background: var(--bg3) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+    color: var(--text);
+}
+
+.card-header {
+    background: var(--bg4) !important;
+    border-bottom: 1px solid var(--border) !important;
+}
+
+.card-body {
+    padding: 1.75rem;
+}
+
+.card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ══════════════════════════════════════════
+   HOME PAGE — HERO
+══════════════════════════════════════════ */
+.min-vh-100.d-flex.align-items-center.justify-content-center {
+    position: relative;
+    min-height: 100vh !important;
+    background:
+        linear-gradient(135deg, rgba(232,25,44,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 50%, rgba(232,25,44,0.05) 0%, transparent 60%),
+        var(--bg);
+}
+
+.min-vh-100.d-flex.align-items-center.justify-content-center::before {
+    content: 'TRAIN HARD';
+    position: absolute;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(6rem, 20vw, 18rem);
+    color: rgba(255,255,255,0.018);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+}
+
+/* Home card override — make it dark and dramatic */
+.min-vh-100 .card {
+    background: rgba(20,20,20,0.92) !important;
+    border: 1px solid var(--border) !important;
+    border-top: 3px solid var(--red) !important;
+    backdrop-filter: blur(20px);
+    position: relative;
+    z-index: 1;
+}
+
+.min-vh-100 .card h1 {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    letter-spacing: 0.02em;
+    background: linear-gradient(135deg, var(--white) 60%, var(--text-muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.min-vh-100 .card .fw-semibold {
+    color: var(--red);
+    font-size: 1.05rem;
+    letter-spacing: 0.05em;
+}
+
+/* ══════════════════════════════════════════
+   TABLES
+══════════════════════════════════════════ */
+.table {
+    color: var(--text);
+    border-color: var(--border);
+}
+
+.table thead tr {
+    background: var(--bg4);
+}
+
+.table thead th {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    border-color: var(--border);
+    padding: 0.85rem 1rem;
+}
+
+.table tbody tr {
+    border-color: var(--border);
+    transition: background .15s;
+}
+
+.table tbody tr:hover {
+    background: rgba(255,255,255,0.03) !important;
+}
+
+.table tbody td {
+    border-color: var(--border);
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    font-size: 0.92rem;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background: rgba(255,255,255,0.02);
+    color: var(--text-muted);
+}
+
+.table-striped tbody tr:nth-of-type(even) {
+    background: transparent;
+}
+
+/* ══════════════════════════════════════════
+   BADGES
+══════════════════════════════════════════ */
+.badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    padding: 0.3em 0.65em;
+    border-radius: 2px;
+}
+
+.badge.bg-success   { background: rgba(34, 197, 94, 0.15) !important; color: #4ade80 !important; border: 1px solid rgba(34,197,94,0.3); }
+.badge.bg-danger    { background: rgba(232, 25, 44, 0.15) !important; color: #f87171 !important; border: 1px solid rgba(232,25,44,0.3); }
+.badge.bg-secondary { background: rgba(255,255,255,0.08) !important; color: var(--text-muted) !important; border: 1px solid var(--border); }
+.badge.bg-warning   { background: rgba(251,191,36,0.15) !important; color: #fbbf24 !important; border: 1px solid rgba(251,191,36,0.3); }
+.badge.bg-info      { background: rgba(59,130,246,0.15) !important; color: #60a5fa !important; border: 1px solid rgba(59,130,246,0.3); }
+.badge.bg-primary   { background: rgba(232,25,44,0.15) !important; color: var(--red) !important; border: 1px solid rgba(232,25,44,0.3); }
+
+/* ══════════════════════════════════════════
+   FORMS
+══════════════════════════════════════════ */
+.form-control, .form-select {
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 2px;
+    padding: 0.65rem 1rem;
+    font-size: 0.92rem;
+    font-family: 'Barlow', sans-serif;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.form-control:focus, .form-select:focus {
+    background: var(--bg4);
+    border-color: var(--red);
+    color: var(--text);
+    box-shadow: 0 0 0 3px var(--red-glow);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.form-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+}
+
+.form-text { color: rgba(136,136,136,0.8); font-size: 0.8rem; }
+
+textarea.form-control { resize: vertical; }
+
+/* ══════════════════════════════════════════
+   ALERTS
+══════════════════════════════════════════ */
+.alert {
+    border-radius: 2px;
+    font-size: 0.9rem;
+    border-left: 3px solid;
+}
+
+.alert-success {
+    background: rgba(34,197,94,0.08);
+    border-color: #4ade80;
+    color: #4ade80;
 }
 
 .alert-danger {
-    background-color: #fff;
-    border-left: 4px solid var(--color-red);
-    color: var(--color-red);
+    background: rgba(232,25,44,0.08);
+    border-color: var(--red);
+    color: #f87171;
 }
 
-/* ================================
-   Checkbox
-   ================================ */
-
-.form-check-input:checked {
-    background-color: var(--color-gold);
-    border-color: var(--color-gold);
+.alert-warning {
+    background: rgba(251,191,36,0.08);
+    border-color: #fbbf24;
+    color: #fbbf24;
 }
 
-/* ================================
-   Horizontal Rule
-   ================================ */
+.alert-info {
+    background: rgba(59,130,246,0.08);
+    border-color: #60a5fa;
+    color: #60a5fa;
+}
 
+.alert-light {
+    background: var(--bg4);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.btn-close { filter: invert(1); }
+
+/* ══════════════════════════════════════════
+   ACCORDION (Workout History)
+══════════════════════════════════════════ */
+.accordion-item {
+    background: var(--bg3) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 4px !important;
+    overflow: hidden;
+}
+
+.accordion-button {
+    background: var(--bg4) !important;
+    color: var(--text) !important;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+    box-shadow: none !important;
+}
+
+.accordion-button:not(.collapsed) {
+    color: var(--white) !important;
+    background: rgba(232,25,44,0.1) !important;
+    border-bottom: 1px solid var(--red);
+}
+
+.accordion-button::after {
+    filter: invert(1);
+}
+
+.accordion-body {
+    background: var(--bg3);
+    padding: 1.5rem;
+}
+
+/* ══════════════════════════════════════════
+   PROGRESS BAR
+══════════════════════════════════════════ */
+.progress {
+    background: var(--bg4);
+    border-radius: 2px;
+}
+
+.progress-bar.bg-success { background: #4ade80 !important; }
+.progress-bar.bg-warning { background: #fbbf24 !important; }
+.progress-bar.bg-secondary { background: var(--text-muted) !important; }
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+.footer {
+    position: relative !important;
+    background: var(--bg2);
+    border-top: 1px solid var(--border) !important;
+    padding: 1.5rem 0;
+    line-height: normal;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.footer a { color: var(--red); }
+.footer a:hover { color: #ff3347; }
+
+/* ══════════════════════════════════════════
+   ADMIN DASHBOARD STATS CARDS
+══════════════════════════════════════════ */
+.card h2, .card h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    color: var(--white);
+}
+
+/* Stat number cards */
+.card h2.mb-3 {
+    font-size: 3rem;
+    color: var(--red);
+    text-shadow: 0 0 30px rgba(232,25,44,0.4);
+}
+
+/* ══════════════════════════════════════════
+   TEXT UTILITIES
+══════════════════════════════════════════ */
+.text-muted { color: var(--text-muted) !important; }
+.text-danger { color: #f87171 !important; }
+.text-success { color: #4ade80 !important; }
+.fw-bold, .fw-semibold { color: var(--white); }
+.fst-italic { color: var(--text-muted); }
+.text-center { text-align: center; }
+
+/* ══════════════════════════════════════════
+   SEPARATORS
+══════════════════════════════════════════ */
 hr {
-    border-top: 1px solid #e0e0e0;
+    border-color: var(--border);
+    opacity: 1;
+    margin: 2rem 0;
 }
 
-
-.navbar {
-    background-color: #ffffff;
+/* ══════════════════════════════════════════
+   MEMBERSHIP TIERS — BUY PAGE
+══════════════════════════════════════════ */
+/* Override inline styles for buy membership */
+[style*="border: 1px solid black"] {
+    border: 1px solid var(--border) !important;
+    background: var(--bg3) !important;
+    border-radius: 4px !important;
+    padding: 2rem !important;
+    margin: 1rem 0 !important;
+    transition: border-color .2s, transform .2s !important;
 }
 
-.nav-link {
-    color: #111111;
-    font-weight: 500;
+[style*="border: 1px solid black"]:hover {
+    border-color: var(--red) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: var(--shadow-red) !important;
+}
+
+/* ══════════════════════════════════════════
+   CHART.JS — Visit Chart
+══════════════════════════════════════════ */
+canvas {
+    filter: brightness(1.05);
+}
+
+/* ══════════════════════════════════════════
+   SECTION HEADINGS
+══════════════════════════════════════════ */
+.d-flex.justify-content-between.align-items-center h2 {
     position: relative;
+    padding-bottom: 0.5rem;
 }
 
-    .nav-link:hover {
-        color: var(--color-gold);
+.d-flex.justify-content-between.align-items-center h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: var(--red);
+}
+
+/* ══════════════════════════════════════════
+   LOGIN / REGISTER PAGES
+══════════════════════════════════════════ */
+/* Simple style for login/register if they use plain markup */
+.container h2 {
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+}
+
+/* ══════════════════════════════════════════
+   SELECTION HIGHLIGHT
+══════════════════════════════════════════ */
+::selection {
+    background: var(--red);
+    color: var(--white);
+}
+
+/* ══════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════ */
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    animation: fadeSlideUp 0.4s ease forwards;
+}
+
+/* Red line accent on card hover */
+.card:not(.accordion-item):hover {
+    border-color: rgba(232,25,44,0.35) !important;
+    transition: border-color .3s;
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE TWEAKS
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .navbar-collapse {
+        background: var(--bg2);
+        padding: 1rem;
+        border-top: 1px solid var(--border);
+        margin-top: 0.5rem;
     }
+    .card-body { padding: 1.25rem; }
+    h1 { font-size: 2rem; }
+}
 
-    .nav-link.active {
-        color: var(--color-gold) !important;
-    }
+/* ══════════════════════════════════════════
+   BLOCKQUOTE (trainer responses)
+══════════════════════════════════════════ */
+.blockquote-footer {
+    color: var(--text-muted);
+    font-style: italic;
+}
 
-        .nav-link.active::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: -6px;
-            width: 100%;
-            height: 2px;
-            background-color: var(--color-gold);
-        }
+/* ══════════════════════════════════════════
+   NAV PILLS (if used)
+══════════════════════════════════════════ */
+.nav-pills .nav-link.active {
+    background-color: var(--red) !important;
+    border-color: var(--red) !important;
+}
 
+/* ══════════════════════════════════════════
+   BOX SHADOW / BORDER UTILITIES OVERRIDE
+══════════════════════════════════════════ */
+.shadow-sm  { box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important; }
+.shadow-lg  { box-shadow: 0 16px 60px rgba(0,0,0,0.7) !important; }
+.border-top { border-top: 1px solid var(--border) !important; }
+.border-bottom { border-bottom: 1px solid var(--border) !important; }
+.rounded-4 { border-radius: 4px !important; }
+
+/* ══════════════════════════════════════════
+   TRAINER CARDS specific
+══════════════════════════════════════════ */
+.border-secondary { border-color: rgba(255,255,255,0.1) !important; }
+
+/* ══════════════════════════════════════════
+   ABOUT PAGE
+══════════════════════════════════════════ */
+.card ul li {
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+    font-size: 0.92rem;
+}
+
+.card ul li::marker { color: var(--red); }
+
+/* ══════════════════════════════════════════
+   LOGIN PARTIAL — navbar buttons
+══════════════════════════════════════════ */
+.navbar-nav ul { list-style: none; padding: 0; margin: 0; }

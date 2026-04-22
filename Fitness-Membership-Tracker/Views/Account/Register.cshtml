@@ -1,27 +1,179 @@
-﻿@model RegisterViewModel
+@model Fitness_Membership_Tracker.Models.RegisterViewModel
 
+@{
+    ViewData["Title"] = "Register";
+}
 
-<h2>Register</h2>
+<style>
+.auth-wrapper {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
 
+.auth-wrapper::before {
+    content: 'JOIN';
+    position: absolute;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(10rem, 30vw, 28rem);
+    color: rgba(255,255,255,0.015);
+    text-transform: uppercase;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+}
 
-<form asp-action="Register" method="post">
-	<div>
-		<label asp-for="Email"></label>
-		<input asp-for="Email" />
-		<span asp-validation-for="Email"></span>
-	</div>
+.auth-card {
+    background: #141414;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-top: 3px solid #e8192c;
+    border-radius: 4px;
+    padding: 3rem 2.75rem;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+}
 
-	<div>
-		<label asp-for="Password"></label>
-		<input asp-for="Password" />
-		<span asp-validation-for="Password"></span>
-	</div>
+.auth-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+.auth-logo span { color: #e8192c; }
 
-	<div>
-		<label asp-for="ConfirmPassword"></label>
-		<input asp-for="ConfirmPassword" />
-		<span asp-validation-for="ConfirmPassword"></span>
-	</div>
+.auth-heading {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 2.4rem;
+    text-transform: uppercase;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 0.35rem;
+}
 
-	<button type="submit">Register</button>
-</form>
+.auth-sub {
+    text-align: center;
+    color: rgba(255,255,255,0.35);
+    font-size: 0.85rem;
+    margin-bottom: 2.25rem;
+    font-weight: 300;
+}
+
+.form-field { margin-bottom: 1.25rem; }
+
+.form-field label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.45);
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.form-field input {
+    width: 100%;
+    background: #1e1e1e;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2px;
+    color: #f0f0f0;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-family: 'Barlow', sans-serif;
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+}
+
+.form-field input:focus {
+    border-color: #e8192c;
+    box-shadow: 0 0 0 3px rgba(232,25,44,0.15);
+}
+
+.form-field input::placeholder { color: rgba(255,255,255,0.2); }
+
+.btn-auth {
+    width: 100%;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: #fff;
+    background: #e8192c;
+    border: none;
+    padding: 0.9rem;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all .25s;
+    box-shadow: 0 4px 25px rgba(232,25,44,0.35);
+}
+
+.btn-auth:hover {
+    background: #c0101f;
+    box-shadow: 0 8px 35px rgba(232,25,44,0.5);
+    transform: translateY(-1px);
+}
+
+.auth-footer-link {
+    text-align: center;
+    margin-top: 1.75rem;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.35);
+}
+
+.auth-footer-link a { color: #e8192c; font-weight: 600; text-decoration: none; }
+.auth-footer-link a:hover { color: #ff3347; }
+
+.text-danger { color: #f87171 !important; font-size: 0.8rem; }
+</style>
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo">Fit<span>Zone</span></div>
+        <h2 class="auth-heading">Join Now</h2>
+        <p class="auth-sub">Start your fitness journey today</p>
+
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" style="font-size:0.85rem;"></div>
+
+            <div class="form-field">
+                <label asp-for="Email">Email Address</label>
+                <input asp-for="Email" type="email" placeholder="you@example.com" autocomplete="email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" type="password" placeholder="Min. 6 chars, 1 uppercase, 1 digit" autocomplete="new-password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-field" style="margin-bottom:2rem;">
+                <label asp-for="ConfirmPassword">Confirm Password</label>
+                <input asp-for="ConfirmPassword" type="password" placeholder="Repeat your password" autocomplete="new-password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn-auth">Create Account</button>
+        </form>
+
+        <div class="auth-footer-link">
+            Already a member? <a asp-controller="Account" asp-action="Login">Sign in</a>
+        </div>
+    </div>
+</div>

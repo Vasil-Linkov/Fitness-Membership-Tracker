@@ -1,18 +1,35 @@
-﻿<ul class="navbar-nav">
+<ul class="navbar-nav d-flex flex-row align-items-center gap-2 ms-3">
     @if (User.Identity!.IsAuthenticated)
     {
-        <form asp-controller="Account" asp-action="Logout" method="post">
-            <button type="submit">Logout</button>
-        </form>
+        <li class="nav-item">
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;letter-spacing:0.06em;color:rgba(255,255,255,0.4);text-transform:uppercase;">
+                @User.Identity.Name?.Split('@')[0]
+            </span>
+        </li>
+        <li class="nav-item">
+            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                <button type="submit" class="btn btn-sm"
+                        style="border:1px solid rgba(232,25,44,0.6);color:#e8192c;background:transparent;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;font-size:0.78rem;padding:0.3rem 1rem;border-radius:2px;transition:all .2s;"
+                        onmouseover="this.style.background='#e8192c';this.style.color='#fff'"
+                        onmouseout="this.style.background='transparent';this.style.color='#e8192c'">
+                    Logout
+                </button>
+            </form>
+        </li>
     }
     else
-    {   
-        <div>
-            <a asp-controller="Account" asp-action="Login">Login   </a>
-        </div>
-        <div>
-            <a asp-controller="Account" asp-action="Register">Register</a>
-        </div>
-
+    {
+        <li class="nav-item">
+            <a asp-controller="Account" asp-action="Login"
+               style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.6);padding:0.3rem 0.8rem;transition:color .2s;">
+                Login
+            </a>
+        </li>
+        <li class="nav-item">
+            <a asp-controller="Account" asp-action="Register"
+               style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.1em;color:#fff;background:#e8192c;padding:0.35rem 1.1rem;border-radius:2px;transition:all .2s;box-shadow:0 3px 15px rgba(232,25,44,0.35);">
+                Join Now
+            </a>
+        </li>
     }
 </ul>
