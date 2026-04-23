@@ -1,54 +1,67 @@
 @model VisitStatsViewModel
 
 @{
-    var ordered = Model.DailyVisitCounts.OrderBy(kv => kv.Key).ToList();
-    var labels  = ordered.Select(kv => kv.Key.ToString("dd MMM")).ToList();
-    var values  = ordered.Select(kv => kv.Value).ToList();
+    // ── Determine which page is hosting this partial ──────────────────────────
+    // On the Dashboard the form must navigate to Dashboard?from=…&to=…
+    // On the Visits page it must navigate to Visits?from=…&to=…
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "Dashboard";
+    var currentCtrl   = ViewContext.RouteData.Values["controller"]?.ToString() ?? "Admin";
 
-    // 3-day rolling average. First two entries are null so Chart.js
-    // leaves a gap instead of drawing a line from zero.
-    var rolling = new List<double?>();
-    for (int i = 0; i < values.Count; i++)
-    {
-        rolling.Add(i < 2
-            ? (double?)null
-            : (values[i - 2] + values[i - 1] + values[i]) / 3.0);
-    }
+    // ── Full dataset → JSON for the client-side chart ─────────────────────────
+    var fullData = Model.DailyVisitCounts
+        .OrderBy(kv => kv.Key)
+        .Select(kv => new { date = kv.Key.ToString("yyyy-MM-dd"), count = kv.Value })
+        .ToList();
 
-    // Unique canvas ID — the partial can be rendered twice on the same page
-    // (Dashboard + full Visits page) without collisions.
-    var chartId = "visitChart_" + Guid.NewGuid().ToString("N")[..8];
+    var fullDataJson = System.Text.Json.JsonSerializer.Serialize(fullData);
 
-    // Serialise in C# so nothing complex lands inside the script block.
-    var labelsJson  = System.Text.Json.JsonSerializer.Serialize(labels);
-    var valuesJson  = System.Text.Json.JsonSerializer.Serialize(values);
-    var rollingJson = System.Text.Json.JsonSerializer.Serialize(rolling);
+    var defaultFrom = Model.From.ToString("yyyy-MM-dd");
+    var defaultTo   = Model.To.ToString("yyyy-MM-dd");
+
+    // Unique IDs so two instances on the same page never collide
+    var uid     = Guid.NewGuid().ToString("N")[..8];
+    var chartId = "vc_"  + uid;
+    var fromId  = "vf_"  + uid;
+    var toId    = "vt_"  + uid;
+    var btnId   = "vb_"  + uid;
+    var totalId = "vs1_" + uid;
+    var avgId   = "vs2_" + uid;
+    var peakDId = "vs3_" + uid;
+    var peakCId = "vs4_" + uid;
 }
 
 @* ── Date-range filter ──────────────────────────────────────────────────── *@
-<form method="get" class="row g-2 align-items-end mb-4">
+@* 
+   The form submits to the current action (Dashboard or Visits).
+   This means the controller re-runs with the new dates, loads the correct
+   data window from the DB, and the chart initialises on that window.
+   After that, the client-side filter lets the user narrow further without
+   another reload.
+*@
+<form method="get" asp-controller="@currentCtrl" asp-action="@currentAction"
+      class="row g-2 align-items-end mb-4">
     <div class="col-auto">
-        <label class="form-label mb-1 text-muted small">From</label>
-        <input type="date" name="from" value="@Model.From.ToString("yyyy-MM-dd")"
+        <label for="@fromId" class="form-label mb-1 text-muted small">From</label>
+        <input type="date" id="@fromId" name="from" value="@defaultFrom"
                class="form-control form-control-sm" />
     </div>
     <div class="col-auto">
-        <label class="form-label mb-1 text-muted small">To</label>
-        <input type="date" name="to" value="@Model.To.ToString("yyyy-MM-dd")"
+        <label for="@toId" class="form-label mb-1 text-muted small">To</label>
+        <input type="date" id="@toId" name="to" value="@defaultTo"
                class="form-control form-control-sm" />
     </div>
     <div class="col-auto">
-        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+        <button id="@btnId" type="submit" class="btn btn-primary btn-sm">Apply</button>
     </div>
 </form>
 
-@* ── KPI summary cards ───────────────────────────────────────────────────── *@
+@* ── KPI cards ───────────────────────────────────────────────────────────── *@
 <div class="row g-3 mb-4">
     <div class="col-6 col-xl-3">
         <div class="card shadow-sm h-100">
             <div class="card-body">
                 <p class="text-muted small mb-1">Total Visits</p>
-                <h3 class="mb-0 fw-bold">@Model.TotalVisits</h3>
+                <h3 id="@totalId" class="mb-0 fw-bold">@Model.TotalVisits</h3>
             </div>
         </div>
     </div>
@@ -56,7 +69,7 @@
         <div class="card shadow-sm h-100">
             <div class="card-body">
                 <p class="text-muted small mb-1">Avg / Day</p>
-                <h3 class="mb-0 fw-bold">@Model.AveragePerDay.ToString("F1")</h3>
+                <h3 id="@avgId" class="mb-0 fw-bold">@Model.AveragePerDay.ToString("F1")</h3>
             </div>
         </div>
     </div>
@@ -64,7 +77,7 @@
         <div class="card shadow-sm h-100">
             <div class="card-body">
                 <p class="text-muted small mb-1">Peak Day</p>
-                <h3 class="mb-0 fw-bold">
+                <h3 id="@peakDId" class="mb-0 fw-bold">
                     @(Model.PeakDay.HasValue ? Model.PeakDay.Value.ToString("dd MMM yyyy") : "—")
                 </h3>
             </div>
@@ -74,7 +87,7 @@
         <div class="card shadow-sm h-100">
             <div class="card-body">
                 <p class="text-muted small mb-1">Peak Count</p>
-                <h3 class="mb-0 fw-bold">@Model.PeakCount</h3>
+                <h3 id="@peakCId" class="mb-0 fw-bold">@Model.PeakCount</h3>
             </div>
         </div>
     </div>
@@ -100,7 +113,6 @@
             </div>
         </div>
 
-        @* Explicit height wrapper — stops the canvas from collapsing to 0 px *@
         <div style="position:relative;height:260px;">
             <canvas id="@chartId"></canvas>
         </div>
@@ -108,7 +120,7 @@
     </div>
 </div>
 
-@* Load Chart.js once per page even when the partial is rendered twice *@
+@* Load Chart.js once per page even when the partial renders twice *@
 @if (!ViewData.ContainsKey("_chartjsLoaded"))
 {
     ViewData["_chartjsLoaded"] = true;
@@ -117,21 +129,38 @@
 
 <script>
 (function () {
-    var labels  = @Html.Raw(labelsJson);
-    var values  = @Html.Raw(valuesJson);
-    var rolling = @Html.Raw(rollingJson);
+    var ALL_DATA = @Html.Raw(fullDataJson);
 
-    var canvas = document.getElementById('@chartId');
+    var canvas  = document.getElementById('@chartId');
+    var fromEl  = document.getElementById('@fromId');
+    var toEl    = document.getElementById('@toId');
+    var totalEl = document.getElementById('@totalId');
+    var avgEl   = document.getElementById('@avgId');
+    var peakDEl = document.getElementById('@peakDId');
+    var peakCEl = document.getElementById('@peakCId');
+
     if (!canvas) return;
 
-    new Chart(canvas, {
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun',
+                  'Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    function fmtLabel(iso) {
+        var p = iso.split('-');
+        return parseInt(p[2], 10) + ' ' + MONTHS[parseInt(p[1], 10) - 1];
+    }
+    function fmtFull(iso) {
+        var p = iso.split('-');
+        return parseInt(p[2], 10) + ' ' + MONTHS[parseInt(p[1], 10) - 1] + ' ' + p[0];
+    }
+
+    var chart = new Chart(canvas, {
         data: {
-            labels: labels,
+            labels: [],
             datasets: [
                 {
                     type: 'bar',
                     label: 'Daily Visits',
-                    data: values,
+                    data: [],
                     backgroundColor: 'rgba(27, 110, 194, 0.72)',
                     borderColor:     'rgba(27, 110, 194, 1)',
                     borderWidth: 1,
@@ -142,7 +171,7 @@
                 {
                     type: 'line',
                     label: '3-Day Avg',
-                    data: rolling,
+                    data: [],
                     borderColor:          'rgba(245, 158, 11, 1)',
                     backgroundColor:      'rgba(245, 158, 11, 0.10)',
                     borderWidth: 2.5,
@@ -160,17 +189,13 @@
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: {
-                mode: 'index',
-                intersect: false
-            },
+            interaction: { mode: 'index', intersect: false },
             plugins: {
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
                         label: function (ctx) {
-                            if (ctx.parsed.y === null || ctx.parsed.y === undefined)
-                                return null;
+                            if (ctx.parsed.y === null || ctx.parsed.y === undefined) return null;
                             if (ctx.datasetIndex === 1)
                                 return ' 3-day avg: ' + ctx.parsed.y.toFixed(1);
                             var v = ctx.parsed.y;
@@ -182,11 +207,7 @@
             scales: {
                 x: {
                     grid: { display: false },
-                    ticks: {
-                        maxRotation: 45,
-                        autoSkip: true,
-                        maxTicksLimit: 15
-                    }
+                    ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 15 }
                 },
                 y: {
                     beginAtZero: true,
@@ -196,5 +217,26 @@
             }
         }
     });
+
+    // ── Render with the data the server already sent ─────────────────────────
+    // We do NOT do a client-side date filter here — the server already sliced
+    // the data to the requested window, so we just display everything in ALL_DATA.
+    function renderAll() {
+        var labels  = ALL_DATA.map(function (d) { return fmtLabel(d.date); });
+        var counts  = ALL_DATA.map(function (d) { return d.count; });
+        var rolling = counts.map(function (_, i) {
+            return i < 2 ? null : (counts[i-2] + counts[i-1] + counts[i]) / 3.0;
+        });
+
+        chart.data.labels           = labels;
+        chart.data.datasets[0].data = counts;
+        chart.data.datasets[1].data = rolling;
+        chart.update();
+
+        // KPI cards already rendered by Razor from the server — no need to rewrite
+    }
+
+    renderAll();
+
 })();
 </script>

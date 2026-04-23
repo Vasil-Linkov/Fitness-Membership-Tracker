@@ -1,9 +1,9 @@
 using Fitness_Membership_Tracker.Constants;
+using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Fitness_Membership_Tracker.Data.DataModels;
 
 namespace Fitness_Membership_Tracker.Controllers
 {
@@ -18,19 +18,25 @@ namespace Fitness_Membership_Tracker.Controllers
             UserManager<Member> userManager)
         {
             _employeeService = employeeService;
-            _userManager     = userManager;
+            _userManager = userManager;
         }
 
-        
+        // GET /Employee/Dashboard
         [HttpGet]
         public async Task<IActionResult> Dashboard()
         {
-            // Attempt to find the linked Employee record by matching email
-            var employees = await _employeeService.GetEmployeesAsync(null, User.Identity!.Name ?? string.Empty);
-            var linkedEmployee = employees.FirstOrDefault(e =>
-                e.Email.Equals(User.Identity!.Name, StringComparison.OrdinalIgnoreCase));
+            // Find the Employee record whose email matches the logged-in account
+            var user = await _userManager.GetUserAsync(User);
+            Employee? linked = null;
 
-            ViewBag.LinkedEmployee = linkedEmployee;
+            if (user != null)
+            {
+                var all = await _employeeService.GetEmployeesAsync(null, string.Empty);
+                linked = all.FirstOrDefault(e =>
+                    string.Equals(e.Email, user.Email, StringComparison.OrdinalIgnoreCase));
+            }
+
+            ViewBag.LinkedEmployee = linked;
             return View();
         }
     }
