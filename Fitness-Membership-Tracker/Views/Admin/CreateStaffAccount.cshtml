@@ -1,0 +1,128 @@
+@model CreateStaffAccountViewModel
+
+@{
+    ViewData["Title"] = "Admin — Create Staff Account";
+}
+
+<div class="container mt-4">
+    <div class="mb-3">
+        <a asp-action="Dashboard" class="btn btn-sm btn-outline-secondary mb-3">← Back to Dashboard</a>
+        <h2 class="mb-1">Create Staff Account</h2>
+        <p class="text-muted mb-0">
+            Create a login account for a trainer or employee and link it to their existing profile.
+        </p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <form asp-action="CreateStaffAccount" method="post" id="staffForm">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+                        @* ── Role selector ── *@
+                        <div class="mb-4">
+                            <label asp-for="Role" class="form-label fw-semibold">Staff Role</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio"
+                                           name="Role" id="roleTrainer" value="Trainer"
+                                           @(Model.Role == "Trainer" ? "checked" : "")
+                                           onchange="toggleProfile()" />
+                                    <label class="form-check-label" for="roleTrainer">
+                                        🏃 Trainer
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio"
+                                           name="Role" id="roleEmployee" value="Employee"
+                                           @(Model.Role == "Employee" ? "checked" : "")
+                                           onchange="toggleProfile()" />
+                                    <label class="form-check-label" for="roleEmployee">
+                                        👔 Employee
+                                    </label>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Role" class="text-danger small"></span>
+                        </div>
+
+                        @* ── Trainer profile selector ── *@
+                        <div id="trainerSection" class="mb-3" style="display: @(Model.Role == "Trainer" ? "block" : "none")">
+                            <label asp-for="TrainerId" class="form-label fw-semibold">Link to Trainer Profile</label>
+                            <select asp-for="TrainerId" asp-items="Model.Trainers" class="form-select">
+                                <option value="">— Select trainer profile —</option>
+                            </select>
+                            <div class="form-text">
+                                Only trainers without an existing login account are listed.
+                            </div>
+                            <span asp-validation-for="TrainerId" class="text-danger small"></span>
+                        </div>
+
+                        @* ── Employee profile selector ── *@
+                        <div id="employeeSection" class="mb-3" style="display: @(Model.Role == "Employee" ? "block" : "none")">
+                            <label asp-for="EmployeeId" class="form-label fw-semibold">Link to Employee Profile</label>
+                            <select asp-for="EmployeeId" asp-items="Model.Employees" class="form-select">
+                                <option value="">— Select employee profile —</option>
+                            </select>
+                            <div class="form-text">
+                                Only employees without an existing login account are listed.
+                            </div>
+                            <span asp-validation-for="EmployeeId" class="text-danger small"></span>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        @* ── Login credentials ── *@
+                        <h6 class="fw-semibold text-muted mb-3">Login Credentials</h6>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email (used to log in)</label>
+                            <input asp-for="Email" class="form-control" placeholder="e.g. john.doe@fitzone.bg" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="Password" class="form-label">Password</label>
+                                <input asp-for="Password" type="password" class="form-control" />
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">Create Account</button>
+                            <a asp-action="Dashboard" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleProfile() {
+            const trainerRadio  = document.getElementById('roleTrainer');
+            const trainerSec    = document.getElementById('trainerSection');
+            const employeeSec   = document.getElementById('employeeSection');
+
+            if (trainerRadio.checked) {
+                trainerSec.style.display  = 'block';
+                employeeSec.style.display = 'none';
+            } else {
+                trainerSec.style.display  = 'none';
+                employeeSec.style.display = 'block';
+            }
+        }
+    </script>
+}

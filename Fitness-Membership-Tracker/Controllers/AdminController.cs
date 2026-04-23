@@ -6,6 +6,7 @@ using Fitness_Membership_Tracker.Models.AdminViewModels;
 using Fitness_Membership_Tracker.Services.Implementations;
 using Fitness_Membership_Tracker.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -25,7 +26,7 @@ namespace Fitness_Membership_Tracker.Controllers
         private readonly ITrainerScheduleService _trainerScheduleService;
         private readonly ITrainerTraineeService _trainerTraineeService;
         private readonly ITrainingRequestService _trainingRequestService;
-
+        private readonly UserManager<Member> _userManager;
 
 		public AdminController(
             IEmployeeService employeeService,
@@ -38,7 +39,8 @@ namespace Fitness_Membership_Tracker.Controllers
             ITrainerService trainerService,
             ITrainerScheduleService trainerScheduleService,
             ITrainerTraineeService trainerTraineeService,
-            ITrainingRequestService trainingRequestService)
+            ITrainingRequestService trainingRequestService,
+            UserManager<Member> userManager)
         {
             _employeeService = employeeService;
             _memberService = memberService;
@@ -51,27 +53,30 @@ namespace Fitness_Membership_Tracker.Controllers
             _trainerScheduleService = trainerScheduleService;
             _trainerTraineeService = trainerTraineeService;
             _trainingRequestService = trainingRequestService;
+            _userManager = userManager;
         }
 
         [HttpGet]
-		public async Task<IActionResult> Dashboard()
-		{
-			ViewBag.EmployeeCount = (await _employeeService.GetEmployeesAsync(null, string.Empty)).Count();
-			ViewBag.MemberCount = (await _memberService.GetAllAsync()).Count();
-			ViewBag.MembershipCount = (await _membershipService.GetAllAsync()).Count();
-			ViewBag.PaymentCount = (await _paymentService.GetAllAsync()).Count();
-            ViewBag.TrainerCount = (await _trainerService.GetTrainersAsync(null, string.Empty)).Count();
+        public async Task<IActionResult> Dashboard(DateTime? from, DateTime? to)
+        {
+            // Use query-string dates if supplied, otherwise default to last 30 days
+            var dateTo = to ?? DateTime.Today;
+            var dateFrom = from ?? dateTo.AddDays(-29);
 
-            var to = DateTime.Today;
-            var from = to.AddDays(-29);
-            ViewBag.VisitStats = await BuildVisitStatsViewModel(from, to, includeList: false);
+            ViewBag.EmployeeCount = (await _employeeService.GetEmployeesAsync(null, string.Empty)).Count;
+            ViewBag.MemberCount = (await _memberService.GetAllAsync()).Count;
+            ViewBag.MembershipCount = (await _membershipService.GetAllAsync()).Count;
+            ViewBag.PaymentCount = (await _paymentService.GetAllAsync()).Count;
+            ViewBag.TrainerCount = (await _trainerService.GetTrainersAsync(null, string.Empty)).Count;
+
+            ViewBag.VisitStats = await BuildVisitStatsViewModel(dateFrom, dateTo, includeList: false);
 
             return View();
-		}
+        }
 
-		#region Employees
+        #region Employees
 
-		[HttpGet]
+        [HttpGet]
 		public async Task<IActionResult> Employees(int? locationId, string? search)
 		{
 			if(search == null)
@@ -237,19 +242,42 @@ namespace Fitness_Membership_Tracker.Controllers
 			return RedirectToAction(nameof(Memberships));
 		}
 
-		#endregion
+        #endregion
 
 
-		#region Payments
+        #region Payments
 
-		[HttpGet]
-		public async Task<IActionResult> Payments()
-		{
-			var payments = await _paymentService.GetAllAsync();
-			return View(payments);
-		}
+        [HttpGet]
+        public async Task<IActionResult> Payments(string? search, DateTime? date)
+        {
+            var payments = await _paymentService.GetAllAsync();
 
-		[HttpGet]
+            // Filter by payer email / name (case-insensitive)
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim().ToLower();
+                payments = payments
+                    .Where(p => p.Member != null &&
+                                (p.Member.Email ?? "").ToLower().Contains(term))
+                    .ToList();
+            }
+
+            // Filter by exact calendar date
+            if (date.HasValue)
+            {
+                payments = payments
+                    .Where(p => p.PaymentDate.Date == date.Value.Date)
+                    .ToList();
+            }
+
+            ViewBag.Search = search ?? string.Empty;
+            ViewBag.Date = date?.ToString("yyyy-MM-dd") ?? string.Empty;
+
+            return View(payments);
+        }
+
+
+        [HttpGet]
 		public async Task<IActionResult> CreatePayment()
 		{
 			var model = new CreatePaymentAdminViewModel
@@ -428,6 +456,132 @@ namespace Fitness_Membership_Tracker.Controllers
         }
 
         #endregion
+
+        //-------
+        #region Staff Accounts
+
+        [HttpGet]
+        public async Task<IActionResult> CreateStaffAccount()
+        {
+            var model = new CreateStaffAccountViewModel
+            {
+                Trainers = await GetAvailableTrainersForAccount(),
+                Employees = await GetAvailableEmployeesForAccount()
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateStaffAccount(CreateStaffAccountViewModel model)
+        {
+            // Role-specific profile validation
+            if (model.Role == Roles.Trainer && model.TrainerId == null)
+                ModelState.AddModelError(nameof(model.TrainerId), "Please select a trainer profile.");
+
+            if (model.Role == Roles.Employee && model.EmployeeId == null)
+                ModelState.AddModelError(nameof(model.EmployeeId), "Please select an employee profile.");
+
+            if (!ModelState.IsValid)
+            {
+                model.Trainers = await GetAvailableTrainersForAccount();
+                model.Employees = await GetAvailableEmployeesForAccount();
+                return View(model);
+            }
+
+            // Check if email exists
+            var existing = await _userManager.FindByEmailAsync(model.Email);
+            if (existing != null)
+            {
+                ModelState.AddModelError(nameof(model.Email), "This email is already in use.");
+                model.Trainers = await GetAvailableTrainersForAccount();
+                model.Employees = await GetAvailableEmployeesForAccount();
+                return View(model);
+            }
+
+            // Build the email used as UserName — prefer the profile's own email so
+            // the trainer/employee can recognise their account.
+            string accountEmail = model.Email;
+
+            if (model.Role == Roles.Trainer && model.TrainerId.HasValue)
+            {
+                var trainer = await _trainerService.GetByIdAsync(model.TrainerId.Value);
+                if (trainer != null)
+                    accountEmail = trainer.Email; // overwrite with profile email
+            }
+            else if (model.Role == Roles.Employee && model.EmployeeId.HasValue)
+            {
+                var employee = await _employeeService.GetByIdAsync(model.EmployeeId.Value);
+                if (employee != null)
+                    accountEmail = employee.Email;
+            }
+
+            // If the profile's own email is already taken, fall back to what the admin typed
+            var profileEmailTaken = await _userManager.FindByEmailAsync(accountEmail);
+            if (profileEmailTaken != null)
+                accountEmail = model.Email;
+
+            var user = new Member
+            {
+                UserName = accountEmail,
+                Email = accountEmail,
+                EmailConfirmed = true,
+                IsDeleted = false
+            };
+
+            var createResult = await _userManager.CreateAsync(user, model.Password);
+
+            if (!createResult.Succeeded)
+            {
+                foreach (var error in createResult.Errors)
+                    ModelState.AddModelError("", error.Description);
+
+                model.Trainers = await GetAvailableTrainersForAccount();
+                model.Employees = await GetAvailableEmployeesForAccount();
+                return View(model);
+            }
+
+            await _userManager.AddToRoleAsync(user, model.Role);
+
+            TempData["Success"] = $"{model.Role} account created. Login: {accountEmail}";
+            return RedirectToAction(nameof(Dashboard));
+        }
+
+        // ── Helpers for staff-account dropdowns ──────────────────────────────
+
+        /// <summary>Trainers that do not yet have a Member (Identity) account.</summary>
+        private async Task<IEnumerable<SelectListItem>> GetAvailableTrainersForAccount()
+        {
+            var allTrainers = await _trainerService.GetTrainersAsync(null, string.Empty);
+            var existingEmails = _userManager.Users.Select(u => u.Email).ToHashSet();
+
+            return allTrainers
+                .Where(t => !existingEmails.Contains(t.Email))
+                .Select(t => new SelectListItem
+                {
+                    Value = t.Id.ToString(),
+                    Text = $"{t.FirstName} {t.LastName} — {t.Specialization} ({t.Email})"
+                })
+                .OrderBy(item => item.Text);
+        }
+
+        /// <summary>Employees that do not yet have a Member (Identity) account.</summary>
+        private async Task<IEnumerable<SelectListItem>> GetAvailableEmployeesForAccount()
+        {
+            var allEmployees = await _employeeService.GetEmployeesAsync(null, string.Empty);
+            var existingEmails = _userManager.Users.Select(u => u.Email).ToHashSet();
+
+            return allEmployees
+                .Where(e => !existingEmails.Contains(e.Email))
+                .Select(e => new SelectListItem
+                {
+                    Value = e.Id.ToString(),
+                    Text = $"{e.FirstName} {e.LastName} — {e.Location?.City} ({e.Email})"
+                })
+                .OrderBy(item => item.Text);
+        }
+
+        #endregion 
 
 
         /* Since dropdown menues are used in many selections,

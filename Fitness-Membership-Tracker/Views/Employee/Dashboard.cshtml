@@ -1,0 +1,132 @@
+@{
+    ViewData["Title"] = "Employee Dashboard";
+}
+
+<div class="container mt-4">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Employee Dashboard</h2>
+            <p class="text-muted mb-0">
+                Welcome, <strong>@User.Identity?.Name</strong>
+            </p>
+        </div>
+        <span class="badge bg-primary fs-6 px-3 py-2">Employee</span>
+    </div>
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body text-center py-4">
+                    <div class="fs-1 mb-2">🏋️</div>
+                    <h6 class="text-muted mb-1">Your Role</h6>
+                    <p class="fw-bold mb-0">Gym Staff</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body text-center py-4">
+                    <div class="fs-1 mb-2">📋</div>
+                    <h6 class="text-muted mb-1">Responsibilities</h6>
+                    <p class="fw-bold mb-0">Member Check-in & Support</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body text-center py-4">
+                    <div class="fs-1 mb-2">💳</div>
+                    <h6 class="text-muted mb-1">Payments Handled</h6>
+                    <p class="fw-bold mb-0">Processed on-site</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body text-center py-4">
+                    <div class="fs-1 mb-2">📍</div>
+                    <h6 class="text-muted mb-1">Location</h6>
+                    <p class="fw-bold mb-0">Assigned branch</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header border-0 bg-light">
+                    <h5 class="mb-0 fw-semibold">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">
+                        As a gym employee, you assist members with day-to-day operations at your branch.
+                    </p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item px-0 d-flex align-items-center gap-2">
+                            <span class="badge bg-success rounded-circle p-1">✓</span>
+                            Process membership payments at the front desk
+                        </li>
+                        <li class="list-group-item px-0 d-flex align-items-center gap-2">
+                            <span class="badge bg-success rounded-circle p-1">✓</span>
+                            Register member visits and check-ins
+                        </li>
+                        <li class="list-group-item px-0 d-flex align-items-center gap-2">
+                            <span class="badge bg-success rounded-circle p-1">✓</span>
+                            Assist members with account queries
+                        </li>
+                        <li class="list-group-item px-0 d-flex align-items-center gap-2">
+                            <span class="badge bg-success rounded-circle p-1">✓</span>
+                            Maintain facility cleanliness and equipment
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header border-0 bg-light">
+                    <h5 class="mb-0 fw-semibold">Shift Information</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-3">
+                        Contact your manager for your current shift schedule and any updates.
+                    </p>
+                    <div class="alert alert-info border-0 mb-3">
+                        <strong>Note:</strong> For any administrative changes to member records or system data,
+                        please contact an admin directly.
+                    </div>
+                    <div class="d-flex align-items-center gap-2 text-muted small">
+                        <span>📧</span>
+                        <span>Logged in as: <strong>@User.Identity?.Name</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

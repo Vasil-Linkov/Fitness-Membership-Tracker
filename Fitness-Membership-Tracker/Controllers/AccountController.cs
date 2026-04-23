@@ -1,4 +1,5 @@
-﻿using Fitness_Membership_Tracker.Data.DataModels;
+using Fitness_Membership_Tracker.Constants;
+using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Models;
 using Fitness_Membership_Tracker.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -16,8 +17,10 @@ namespace Fitness_Membership_Tracker.Controllers
             UserManager<Member> userManager)
         {
             _signInManager = signInManager;
-            _userManager = userManager;
+            _userManager   = userManager;
         }
+
+        // ─── Login ───────────────────────────────────────────────────────────
 
         [HttpGet]
         public IActionResult Login(string? returnUrl)
@@ -28,7 +31,6 @@ namespace Fitness_Membership_Tracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl)
         {
             if (!ModelState.IsValid)
@@ -50,8 +52,15 @@ namespace Fitness_Membership_Tracker.Controllers
 
             if (result.Succeeded)
             {
-                if (await _userManager.IsInRoleAsync(user, "Admin"))
+                // Redirect based on role 
+                if (await _userManager.IsInRoleAsync(user, Roles.Admin))
                     return RedirectToAction("Dashboard", "Admin");
+
+                if (await _userManager.IsInRoleAsync(user, Roles.Trainer))
+                    return RedirectToAction("Dashboard", "Trainer");
+
+                if (await _userManager.IsInRoleAsync(user, Roles.Employee))
+                    return RedirectToAction("Dashboard", "Employee");
 
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     return Redirect(returnUrl);
@@ -63,6 +72,8 @@ namespace Fitness_Membership_Tracker.Controllers
             return View(model);
         }
 
+        // ─── Logout ──────────────────────────────────────────────────────────
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -71,6 +82,7 @@ namespace Fitness_Membership_Tracker.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        // ─── Register (public self-registration — Member role only) ──────────
 
         [HttpGet]
         public IActionResult Register()
@@ -82,41 +94,39 @@ namespace Fitness_Membership_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-			if (!ModelState.IsValid)
-				return View(model);
+            if (!ModelState.IsValid)
+                return View(model);
 
-			var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
-			if (existingUserByEmail != null)
-			{
-				ModelState.AddModelError(nameof(model.Email), "Email is already in use.");
-				return View(model);
-			}
-
-
-			var user = new Member
+            var existingUser = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUser != null)
             {
-				UserName = model.Email,
-				Email = model.Email,
-				IsDeleted = false
-			};
+                ModelState.AddModelError(nameof(model.Email), "Email is already in use.");
+                return View(model);
+            }
 
-			var result = await _userManager.CreateAsync(user, model.Password);
+            var user = new Member
+            {
+                UserName  = model.Email,
+                Email     = model.Email,
+                IsDeleted = false
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                // auto confirm emails (email confirmation is there for proof of concept)
+                // Auto-confirm email (proof-of-concept)
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 await _userManager.ConfirmEmailAsync(user, token);
 
                 await _signInManager.SignInAsync(user, isPersistent: false);
-				return RedirectToAction("Index", "Home");
-			}
+                return RedirectToAction("Index", "Home");
+            }
 
-			foreach (var error in result.Errors)
-				ModelState.AddModelError("", error.Description);
+            foreach (var error in result.Errors)
+                ModelState.AddModelError("", error.Description);
 
-			return View(model);
+            return View(model);
         }
-
     }
 }

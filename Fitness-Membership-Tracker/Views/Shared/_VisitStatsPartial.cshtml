@@ -1,25 +1,48 @@
 @model VisitStatsViewModel
 
 @{
-    var labels  = Model.DailyVisitCounts.OrderBy(kv => kv.Key).Select(kv => kv.Key.ToString("dd MMM")).ToList();
-    var values  = Model.DailyVisitCounts.OrderBy(kv => kv.Key).Select(kv => kv.Value).ToList();
-    var chartId = "visitChart_" + Guid.NewGuid().ToString("N").Substring(0, 8);
+    var ordered = Model.DailyVisitCounts.OrderBy(kv => kv.Key).ToList();
+    var labels  = ordered.Select(kv => kv.Key.ToString("dd MMM")).ToList();
+    var values  = ordered.Select(kv => kv.Value).ToList();
+
+    // 3-day rolling average. First two entries are null so Chart.js
+    // leaves a gap instead of drawing a line from zero.
+    var rolling = new List<double?>();
+    for (int i = 0; i < values.Count; i++)
+    {
+        rolling.Add(i < 2
+            ? (double?)null
+            : (values[i - 2] + values[i - 1] + values[i]) / 3.0);
+    }
+
+    // Unique canvas ID — the partial can be rendered twice on the same page
+    // (Dashboard + full Visits page) without collisions.
+    var chartId = "visitChart_" + Guid.NewGuid().ToString("N")[..8];
+
+    // Serialise in C# so nothing complex lands inside the script block.
+    var labelsJson  = System.Text.Json.JsonSerializer.Serialize(labels);
+    var valuesJson  = System.Text.Json.JsonSerializer.Serialize(values);
+    var rollingJson = System.Text.Json.JsonSerializer.Serialize(rolling);
 }
 
+@* ── Date-range filter ──────────────────────────────────────────────────── *@
 <form method="get" class="row g-2 align-items-end mb-4">
     <div class="col-auto">
         <label class="form-label mb-1 text-muted small">From</label>
-        <input type="date" name="from" value="@Model.From.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+        <input type="date" name="from" value="@Model.From.ToString("yyyy-MM-dd")"
+               class="form-control form-control-sm" />
     </div>
     <div class="col-auto">
         <label class="form-label mb-1 text-muted small">To</label>
-        <input type="date" name="to" value="@Model.To.ToString("yyyy-MM-dd")" class="form-control form-control-sm" />
+        <input type="date" name="to" value="@Model.To.ToString("yyyy-MM-dd")"
+               class="form-control form-control-sm" />
     </div>
     <div class="col-auto">
         <button type="submit" class="btn btn-primary btn-sm">Apply</button>
     </div>
 </form>
 
+@* ── KPI summary cards ───────────────────────────────────────────────────── *@
 <div class="row g-3 mb-4">
     <div class="col-6 col-xl-3">
         <div class="card shadow-sm h-100">
@@ -57,37 +80,121 @@
     </div>
 </div>
 
+@* ── Chart card ──────────────────────────────────────────────────────────── *@
 <div class="card shadow-sm mb-4">
     <div class="card-body">
-        <h6 class="text-muted mb-3">Visits Per Day</h6>
-        <canvas id="@chartId" height="80"></canvas>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="text-muted mb-0">Visits Per Day</h6>
+            <div class="d-flex gap-3 small text-muted">
+                <span>
+                    <span style="display:inline-block;width:12px;height:12px;
+                                 background:rgba(27,110,194,0.75);border-radius:2px;
+                                 margin-right:4px;"></span>Daily visits
+                </span>
+                <span>
+                    <span style="display:inline-block;width:22px;height:3px;
+                                 background:#f59e0b;border-radius:2px;
+                                 margin-right:4px;vertical-align:middle;"></span>3-day avg
+                </span>
+            </div>
+        </div>
+
+        @* Explicit height wrapper — stops the canvas from collapsing to 0 px *@
+        <div style="position:relative;height:260px;">
+            <canvas id="@chartId"></canvas>
+        </div>
+
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@* Load Chart.js once per page even when the partial is rendered twice *@
+@if (!ViewData.ContainsKey("_chartjsLoaded"))
+{
+    ViewData["_chartjsLoaded"] = true;
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+}
+
 <script>
-    (function () {
-        const ctx = document.getElementById('@chartId').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(labels)),
-                datasets: [{
-                    label: 'Visits',
-                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(values)),
-                    backgroundColor: 'rgba(27, 110, 194, 0.65)',
+(function () {
+    var labels  = @Html.Raw(labelsJson);
+    var values  = @Html.Raw(valuesJson);
+    var rolling = @Html.Raw(rollingJson);
+
+    var canvas = document.getElementById('@chartId');
+    if (!canvas) return;
+
+    new Chart(canvas, {
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    type: 'bar',
+                    label: 'Daily Visits',
+                    data: values,
+                    backgroundColor: 'rgba(27, 110, 194, 0.72)',
                     borderColor:     'rgba(27, 110, 194, 1)',
                     borderWidth: 1,
-                    borderRadius: 4
-                }]
+                    borderRadius: 4,
+                    order: 2,
+                    yAxisID: 'y'
+                },
+                {
+                    type: 'line',
+                    label: '3-Day Avg',
+                    data: rolling,
+                    borderColor:          'rgba(245, 158, 11, 1)',
+                    backgroundColor:      'rgba(245, 158, 11, 0.10)',
+                    borderWidth: 2.5,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    pointBackgroundColor: 'rgba(245, 158, 11, 1)',
+                    tension: 0.35,
+                    fill: false,
+                    spanGaps: false,
+                    order: 1,
+                    yAxisID: 'y'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false
             },
-            options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, ticks: { precision: 0 } }
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function (ctx) {
+                            if (ctx.parsed.y === null || ctx.parsed.y === undefined)
+                                return null;
+                            if (ctx.datasetIndex === 1)
+                                return ' 3-day avg: ' + ctx.parsed.y.toFixed(1);
+                            var v = ctx.parsed.y;
+                            return ' ' + v + ' visit' + (v !== 1 ? 's' : '');
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        maxRotation: 45,
+                        autoSkip: true,
+                        maxTicksLimit: 15
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 },
+                    grid: { color: 'rgba(0,0,0,0.05)' }
                 }
             }
-        });
-    })();
+        }
+    });
+})();
 </script>
