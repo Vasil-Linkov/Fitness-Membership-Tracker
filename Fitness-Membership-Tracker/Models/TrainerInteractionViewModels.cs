@@ -3,9 +3,24 @@ using Fitness_Membership_Tracker.Data.DataModels;
 
 namespace Fitness_Membership_Tracker.Models
 {
-    // ─── Member-facing ───────────────────────────────────────────────
+    // ── Member-facing: browse trainers ────────────────────────────────────────
 
-    
+    public class BrowseTrainersViewModel
+    {
+        public List<TrainerCardViewModel> Trainers { get; set; } = new();
+        public TrainingRequest? ActiveRequest { get; set; }
+        public TrainerTrainee? CurrentRelationship { get; set; }
+    }
+
+    public class TrainerCardViewModel
+    {
+        public Trainer Trainer { get; set; } = null!;
+        public int ActiveTrainees { get; set; }
+        public int MaxTrainees { get; set; }
+
+        /// <summary>Full weekly availability slots (all days).</summary>
+        public List<TrainerSchedule> WeeklySlots { get; set; } = new();
+    }
 
     public class RequestTrainerViewModel
     {
@@ -16,15 +31,21 @@ namespace Fitness_Membership_Tracker.Models
         public string? MemberMessage { get; set; }
     }
 
-
     public class MyTrainerViewModel
     {
         public TrainerTrainee? ActiveRelationship { get; set; }
         public List<TrainingRequest> RequestHistory { get; set; } = new();
     }
 
+    // ── Member-facing: training sessions ─────────────────────────────────────
 
-    // ─── Trainer-facing ──────────────────────────────────────────────
+    public class MySessionsViewModel
+    {
+        public List<TrainingSession> Upcoming { get; set; } = new();
+        public List<TrainingSession> Past { get; set; } = new();
+    }
+
+    // ── Trainer-facing: dashboard ─────────────────────────────────────────────
 
     public class TrainerDashboardViewModel
     {
@@ -45,7 +66,41 @@ namespace Fitness_Membership_Tracker.Models
         public string? TrainerResponse { get; set; }
     }
 
-    // ─── Admin ───────────────────────────────────────────────────────
+    // ── Trainer-facing: schedule page ────────────────────────────────────────
+
+    public class TrainerSchedulePageViewModel
+    {
+        public Trainer Trainer { get; set; } = null!;
+        public List<TrainerSchedule> AvailabilitySlots { get; set; } = new();
+        public List<TrainingSession> Sessions { get; set; } = new();
+    }
+
+    public class BookSessionViewModel
+    {
+        [Required]
+        public int TrainerId { get; set; }
+
+        [Required]
+        public string MemberId { get; set; } = string.Empty;
+
+        [Required]
+        [Display(Name = "Session Date & Time")]
+        public DateTime SessionDate { get; set; } = DateTime.Today.AddDays(1).AddHours(9);
+
+        [Required, Range(15, 480)]
+        [Display(Name = "Duration (minutes)")]
+        public int DurationMinutes { get; set; } = 60;
+
+        [MaxLength(500)]
+        [Display(Name = "Session Notes / Focus Area")]
+        public string? Notes { get; set; }
+
+        // Populated for the view — not bound from the form
+        public Trainer? Trainer { get; set; }
+        public List<TrainerTrainee> ActiveTrainees { get; set; } = new();
+    }
+
+    // ── Admin-facing: trainer management ─────────────────────────────────────
 
     public class UpdateTrainerCapacityViewModel
     {
