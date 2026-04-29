@@ -5,21 +5,7 @@ namespace Fitness_Membership_Tracker.Models
 {
     // ─── Member-facing ───────────────────────────────────────────────
 
-    public class BrowseTrainersViewModel
-    {
-        public List<TrainerCardViewModel> Trainers { get; set; } = new();
-        public DayOfWeek SelectedDay { get; set; } = DateTime.Today.DayOfWeek;
-        public TrainingRequest? ActiveRequest { get; set; }
-        public TrainerTrainee? CurrentRelationship { get; set; }
-    }
-
-    public class TrainerCardViewModel
-    {
-        public Trainer Trainer { get; set; } = null!;
-        public int ActiveTrainees { get; set; }
-        public int MaxTrainees { get; set; }
-        public List<TrainerSchedule> TodaySlots { get; set; } = new();
-    }
+    
 
     public class RequestTrainerViewModel
     {

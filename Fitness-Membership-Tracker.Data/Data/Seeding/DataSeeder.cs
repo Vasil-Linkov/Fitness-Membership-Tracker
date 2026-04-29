@@ -60,6 +60,14 @@ namespace Fitness_Membership_Tracker.Data.Seeding
                 logger.LogInformation("Seeding trainer relationships and requests...");
                 await TrainerRelationshipSeeder.SeedAsync(context);
 
+                // ── 8. Staff Identity accounts ───────────────────────────────
+                logger.LogInformation("Seeding staff accounts (trainers & employees)...");
+                await StaffAccountSeeder.SeedAsync(context, userManager, roleManager);
+
+                // ── 9. Training sessions ──────────────────────────────────────
+                logger.LogInformation("Seeding training sessions...");
+                await TrainingSessionSeeder.SeedAsync(context);
+
                 logger.LogInformation("Database seeding completed successfully.");
             }
             catch (Exception ex)

@@ -1,0 +1,101 @@
+@model BookSessionViewModel
+
+@{
+    ViewData["Title"] = "Book a Session";
+}
+
+<div class="container mt-4">
+    <a asp-action="MySchedule" class="btn btn-sm btn-outline-secondary mb-3">← Back to My Schedule</a>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+
+                    <h4 class="fw-bold mb-1">Book a Training Session</h4>
+                    <p class="text-muted mb-4">
+                        Schedule a session with one of your active trainees.
+                        You can book multiple sessions per week.
+                    </p>
+
+                    @if (!Model.ActiveTrainees.Any())
+                    {
+                        <div class="alert alert-warning">
+                            You have no active trainees yet. Accept a training request first.
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-action="BookSession" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" asp-for="TrainerId" />
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+                            <div class="mb-3">
+                                <label asp-for="MemberId" class="form-label fw-semibold">Trainee</label>
+                                <select asp-for="MemberId" class="form-select">
+                                    @foreach (var tt in Model.ActiveTrainees)
+                                    {
+                                        <option value="@tt.MemberId"
+                                                selected="@(Model.MemberId == tt.MemberId)">
+                                            @tt.Member?.Email
+                                        </option>
+                                    }
+                                </select>
+                                <span asp-validation-for="MemberId" class="text-danger small"></span>
+                            </div>
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-7">
+                                    <label asp-for="SessionDate" class="form-label fw-semibold">Date &amp; Time</label>
+                                    <input asp-for="SessionDate" type="datetime-local" class="form-control"
+                                           value="@Model.SessionDate.ToString("yyyy-MM-ddTHH:mm")" />
+                                    <span asp-validation-for="SessionDate" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-5">
+                                    <label asp-for="DurationMinutes" class="form-label fw-semibold">Duration (min)</label>
+                                    <select asp-for="DurationMinutes" class="form-select">
+                                        <option value="30">30 min</option>
+                                        <option value="45">45 min</option>
+                                        <option value="60" selected>60 min</option>
+                                        <option value="75">75 min</option>
+                                        <option value="90">90 min</option>
+                                        <option value="120">120 min</option>
+                                    </select>
+                                    <span asp-validation-for="DurationMinutes" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="Notes" class="form-label fw-semibold">
+                                    Session Notes
+                                    <span class="text-muted fw-normal small">(optional)</span>
+                                </label>
+                                <textarea asp-for="Notes" class="form-control" rows="3"
+                                          placeholder="e.g. Focus on lower body, assessment session, HIIT…"
+                                          maxlength="500"></textarea>
+                                <span asp-validation-for="Notes" class="text-danger small"></span>
+                            </div>
+
+                            @* Show trainer's own availability as a reference *@
+                            @if (Model.Trainer != null)
+                            {
+                                var slots = ViewBag.TrainerSlots as List<Fitness_Membership_Tracker.Data.DataModels.TrainerSchedule>;
+                            }
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Book Session</button>
+                                <a asp-action="MySchedule" class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

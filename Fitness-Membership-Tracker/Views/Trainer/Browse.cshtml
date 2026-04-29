@@ -2,80 +2,63 @@
 
 @{
     ViewData["Title"] = "Find a Trainer";
-    var days = Enum.GetValues<DayOfWeek>();
+    var dayNames = new[] { "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday" };
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-1">Find a Trainer</h2>
-            <p class="text-muted mb-0">Browse trainers available on the selected day.</p>
+            <p class="text-muted mb-0">Browse available trainers and their weekly schedules.</p>
         </div>
         <a asp-controller="Trainer" asp-action="MyTrainer" class="btn btn-outline-primary">My Trainer</a>
     </div>
 
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show">
             @TempData["Success"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show">
             @TempData["Error"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
 
-    @* Active request / relationship banners *@
+    @* ── Status banners ── *@
     @if (Model.CurrentRelationship != null)
     {
         <div class="alert alert-info">
             You are currently being trained by
             <strong>@Model.CurrentRelationship.Trainer?.FirstName @Model.CurrentRelationship.Trainer?.LastName</strong>.
-            <a asp-action="MyTrainer" class="alert-link ms-2">View details</a>
+            <a asp-action="MyTrainer" class="alert-link ms-2">View details →</a>
         </div>
     }
     else if (Model.ActiveRequest != null)
     {
         <div class="alert alert-warning d-flex align-items-center justify-content-between flex-wrap gap-2">
             <span>
-                You have a pending request to
+                Pending request to
                 <strong>@Model.ActiveRequest.Trainer?.FirstName @Model.ActiveRequest.Trainer?.LastName</strong>.
-                Waiting for a response.
             </span>
             <form asp-action="CancelRequest" method="post" class="d-inline">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="requestId" value="@Model.ActiveRequest.Id" />
                 <button type="submit" class="btn btn-sm btn-outline-danger"
-                        onclick="return confirm('Cancel this request?');">
-                    Cancel Request
-                </button>
+                        onclick="return confirm('Cancel this request?');">Cancel Request</button>
             </form>
         </div>
     }
-
-    @* Day filter *@
-    <div class="d-flex flex-wrap gap-2 mb-4">
-        @foreach (var d in days)
-        {
-            <a asp-action="Browse" asp-route-day="@d"
-               class="btn btn-sm @(Model.SelectedDay == d ? "btn-primary" : "btn-outline-secondary")">
-                @d.ToString()
-            </a>
-        }
-    </div>
 
     @if (!Model.Trainers.Any())
     {
         <div class="card shadow-sm">
             <div class="card-body text-center py-5">
-                <p class="text-muted mb-0">
-                    No trainers are available on <strong>@Model.SelectedDay</strong> right now.
-                    Try a different day.
-                </p>
+                <p class="text-muted mb-0">No trainers are registered in the system yet.</p>
             </div>
         </div>
     }
@@ -84,13 +67,18 @@
         <div class="row g-4">
             @foreach (var card in Model.Trainers)
             {
-                var isFull = card.ActiveTrainees >= card.MaxTrainees;
-                var hasActiveRelOrRequest = Model.CurrentRelationship != null || Model.ActiveRequest != null;
+                var isFull             = card.ActiveTrainees >= card.MaxTrainees;
+                var hasActiveRelOrReq  = Model.CurrentRelationship != null || Model.ActiveRequest != null;
+                var groupedSlots       = card.WeeklySlots
+                    .GroupBy(s => s.DayOfWeek)
+                    .OrderBy(g => g.Key)
+                    .ToList();
 
-                <div class="col-md-6 col-xl-4">
-                    <div class="card shadow-sm h-100 @(isFull ? "border-secondary" : "border-0")">
+                <div class="col-lg-6 col-xl-4">
+                    <div class="card shadow-sm h-100 border-0">
                         <div class="card-body d-flex flex-column">
 
+                            @* ── Header ── *@
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <div>
                                     <h5 class="fw-bold mb-0">
@@ -108,48 +96,63 @@
                                 }
                             </div>
 
+                            @* ── Contact & location ── *@
                             <p class="text-muted small mb-1">
-                                <i class="me-1">📍</i>@card.Trainer.Location?.City
+                                📍 @card.Trainer.Location?.City — @card.Trainer.Location?.Address
+                            </p>
+                            <p class="text-muted small mb-3">
+                                📞 <a href="tel:@card.Trainer.PhoneNumber" class="text-decoration-none">
+                                    @card.Trainer.PhoneNumber
+                                </a>
                             </p>
 
-                            @* Capacity bar *@
+                            @* ── Capacity bar ── *@
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between small text-muted mb-1">
                                     <span>Trainees</span>
                                     <span>@card.ActiveTrainees / @card.MaxTrainees</span>
                                 </div>
-                                <div class="progress" style="height: 6px;">
+                                <div class="progress" style="height:6px;">
                                     @{
-                                        var pct = card.MaxTrainees > 0
-                                            ? (int)((double)card.ActiveTrainees / card.MaxTrainees * 100)
-                                            : 100;
-                                        var barColor = pct >= 100 ? "bg-secondary"
-                                                     : pct >= 80 ? "bg-warning"
-                                                     : "bg-success";
+                                        var pct      = card.MaxTrainees > 0 ? (int)((double)card.ActiveTrainees / card.MaxTrainees * 100) : 100;
+                                        var barColor = pct >= 100 ? "bg-secondary" : pct >= 80 ? "bg-warning" : "bg-success";
                                     }
-                                    <div class="progress-bar @barColor" role="progressbar"
-                                         style="width: @pct%"></div>
+                                    <div class="progress-bar @barColor" style="width:@pct%"></div>
                                 </div>
                             </div>
 
-                            @* Availability slots for selected day *@
-                            @if (card.TodaySlots.Any())
+                            @* ── Full weekly schedule ── *@
+                            @if (groupedSlots.Any())
                             {
-                                <p class="small fw-semibold mb-1 text-muted">
-                                    Available on @Model.SelectedDay:
-                                </p>
-                                <ul class="list-unstyled small mb-3">
-                                    @foreach (var slot in card.TodaySlots)
+                                <p class="small fw-semibold text-muted mb-2">Weekly availability:</p>
+                                <div class="mb-3">
+                                    @foreach (var group in groupedSlots)
                                     {
-                                        <li>
-                                            🕐 @slot.StartTime.ToString(@"hh\:mm") – @slot.EndTime.ToString(@"hh\:mm")
-                                        </li>
+                                        <div class="d-flex align-items-start gap-2 mb-1">
+                                            <span class="badge bg-light text-dark border"
+                                                  style="min-width:80px;font-weight:600;">
+                                                @dayNames[group.Key]
+                                            </span>
+                                            <div class="d-flex flex-wrap gap-1">
+                                                @foreach (var slot in group.OrderBy(s => s.StartTime))
+                                                {
+                                                    <span class="badge bg-primary">
+                                                        @slot.StartTime.ToString(@"hh\:mm") – @slot.EndTime.ToString(@"hh\:mm")
+                                                    </span>
+                                                }
+                                            </div>
+                                        </div>
                                     }
-                                </ul>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted small mb-3 fst-italic">No availability slots set yet.</p>
                             }
 
+                            @* ── Request button ── *@
                             <div class="mt-auto">
-                                @if (hasActiveRelOrRequest || isFull)
+                                @if (hasActiveRelOrReq || isFull)
                                 {
                                     <button class="btn btn-secondary w-100" disabled>
                                         @(isFull ? "Trainer Full" : "Request Unavailable")

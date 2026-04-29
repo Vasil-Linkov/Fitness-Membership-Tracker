@@ -54,8 +54,25 @@
                                    asp-controller="Trainer" asp-action="Browse">Trainers</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link @(currentController == "Trainer" && currentAction == "MySessions" ? "active" : "")"
+                                   asp-controller="Trainer"
+                                   asp-action="MySessions">
+                                    My Sessions
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "Trainer" && currentAction == "MySchedule" ? "active" : "")"
+                                   asp-controller="Trainer"
+                                   asp-action="MySchedule">
+                                    My Schedule
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link @(currentController == "Trainer" && currentAction == "Dashboard" ? "active" : "")"
-                                   asp-controller="Trainer" asp-action="Dashboard">Trainer Panel</a>
+                                   asp-controller="Trainer"
+                                   asp-action="Dashboard">
+                                    Trainer Panel
+                                </a>
                             </li>
                         }
                         @if (User.IsInRole(Fitness_Membership_Tracker.Constants.Roles.Admin))

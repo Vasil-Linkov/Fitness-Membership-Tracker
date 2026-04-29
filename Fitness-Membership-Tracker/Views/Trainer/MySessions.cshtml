@@ -1,0 +1,140 @@
+@model MySessionsViewModel
+
+@{
+    ViewData["Title"] = "My Sessions";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">My Training Sessions</h2>
+            <p class="text-muted mb-0">Sessions booked by your trainer.</p>
+        </div>
+        <a asp-action="MyTrainer" class="btn btn-outline-primary">My Trainer</a>
+    </div>
+
+    @* ── Upcoming ── *@
+    <h5 class="fw-semibold mb-3">
+        Upcoming
+        <span class="badge bg-primary ms-1">@Model.Upcoming.Count</span>
+    </h5>
+
+    @if (!Model.Upcoming.Any())
+    {
+        <div class="card shadow-sm mb-4">
+            <div class="card-body text-center py-4">
+                <p class="text-muted mb-0">No upcoming sessions scheduled.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3 mb-4">
+            @foreach (var s in Model.Upcoming)
+            {
+                var local     = s.SessionDate.ToLocalTime();
+                var daysAway  = (local.Date - DateTime.Today).Days;
+                var urgency   = daysAway == 0 ? "border-warning" : daysAway == 1 ? "border-info" : "border-0";
+
+                <div class="col-md-6 col-xl-4">
+                    <div class="card shadow-sm h-100 @urgency" style="border-width:2px;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <p class="fw-bold mb-0 fs-5">
+                                        @local.ToString("ddd, dd MMM yyyy")
+                                    </p>
+                                    <p class="text-muted mb-0">
+                                        @local.ToString("HH:mm") — @s.DurationMinutes min
+                                    </p>
+                                </div>
+                                @if (daysAway == 0)
+                                {
+                                    <span class="badge bg-warning text-dark">Today</span>
+                                }
+                                else if (daysAway == 1)
+                                {
+                                    <span class="badge bg-info text-dark">Tomorrow</span>
+                                }
+                            </div>
+
+                            <hr class="my-2" />
+
+                            <p class="small text-muted mb-1">
+                                🏃 <strong>@s.Trainer?.FirstName @s.Trainer?.LastName</strong>
+                                <span class="ms-1">— @s.Trainer?.Specialization</span>
+                            </p>
+                            @if (s.Trainer?.PhoneNumber != null)
+                            {
+                                <p class="small text-muted mb-1">
+                                    📞 <a href="tel:@s.Trainer.PhoneNumber" class="text-decoration-none">
+                                        @s.Trainer.PhoneNumber
+                                    </a>
+                                </p>
+                            }
+                            @if (!string.IsNullOrEmpty(s.Notes))
+                            {
+                                <p class="small fst-italic text-muted mb-0 mt-2">
+                                    "@s.Notes"
+                                </p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @* ── Past ── *@
+    <h5 class="fw-semibold mb-3">
+        Past Sessions
+        <span class="badge bg-secondary ms-1">@Model.Past.Count</span>
+    </h5>
+
+    @if (!Model.Past.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-4">
+                <p class="text-muted mb-0">No past sessions yet.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date &amp; Time</th>
+                                <th>Trainer</th>
+                                <th>Duration</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var s in Model.Past)
+                            {
+                                <tr>
+                                    <td class="text-muted">
+                                        @s.SessionDate.ToLocalTime().ToString("ddd dd MMM yyyy HH:mm")
+                                    </td>
+                                    <td>
+                                        @s.Trainer?.FirstName @s.Trainer?.LastName
+                                        <span class="text-muted small d-block">@s.Trainer?.Specialization</span>
+                                    </td>
+                                    <td>@s.DurationMinutes min</td>
+                                    <td class="text-muted small">
+                                        @(string.IsNullOrEmpty(s.Notes) ? "—" : s.Notes)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

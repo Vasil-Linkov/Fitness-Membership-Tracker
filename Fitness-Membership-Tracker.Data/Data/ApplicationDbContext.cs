@@ -23,13 +23,14 @@ namespace Fitness_Membership_Tracker.Data
         public DbSet<Visit> Visits { get; set; }
         public DbSet<Trainer> Trainers { get; set; }
 
-        // entities related to dynamic functionality that changes every day(almost)
+        // entities related to dynamic functionality that changes often
         public DbSet<WorkoutLog> WorkoutLogs { get; set; }
         public DbSet<WorkoutExercise> WorkoutExercises { get; set; }
         public DbSet<TrainerSchedule> TrainerSchedules { get; set; }
         public DbSet<TrainingRequest> TrainingRequests { get; set; }
         public DbSet<TrainerTrainee> TrainerTrainees { get; set; }
         public DbSet<TrainerCapacity> TrainerCapacities { get; set; }
+        public DbSet<TrainingSession> TrainingSessions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

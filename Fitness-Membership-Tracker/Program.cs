@@ -39,10 +39,9 @@ namespace Fitness_Membership_Tracker
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-            // MVC
-            builder.Services.AddControllersWithViews();
-
+            
             // Application services
+            builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IMemberService, MemberService>();
             builder.Services.AddScoped<IMembershipService, MembershipService>();
@@ -55,8 +54,9 @@ namespace Fitness_Membership_Tracker
             builder.Services.AddScoped<ITrainerTraineeService, TrainerTraineeService>();
             builder.Services.AddScoped<ITrainingRequestService, TrainingRequestService>();
             builder.Services.AddScoped<IWorkoutService, WorkoutService>();
+            builder.Services.AddScoped<ITrainingSessionService, TrainingSessionService>();
 
-            // Build app
+            
             var app = builder.Build();
 
             // HTTP pipeline

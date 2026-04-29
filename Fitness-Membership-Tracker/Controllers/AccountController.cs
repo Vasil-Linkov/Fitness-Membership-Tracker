@@ -2,11 +2,13 @@ using Fitness_Membership_Tracker.Constants;
 using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Models;
 using Fitness_Membership_Tracker.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fitness_Membership_Tracker.Controllers
 {
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly SignInManager<Member> _signInManager;
@@ -23,6 +25,7 @@ namespace Fitness_Membership_Tracker.Controllers
         // ─── Login ───────────────────────────────────────────────────────────
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login(string? returnUrl)
         {
             ViewData["ReturnUrl"] = returnUrl;
