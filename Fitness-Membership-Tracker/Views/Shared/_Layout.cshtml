@@ -1,6 +1,6 @@
 @{
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var currentAction     = ViewContext.RouteData.Values["action"]?.ToString();
 }
 
 <!DOCTYPE html>
@@ -8,80 +8,97 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] — FitZone</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <title>@ViewData["Title"] - Fitness Membership Tracker</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Fitness_Membership_Tracker.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-dark">
-            <div class="container-fluid px-4">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    FitZone
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    Fitness Membership Tracker
                 </a>
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-                        data-bs-target=".navbar-collapse"
+                <button class="navbar-toggler" type="button"
+                        data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                         aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-center">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
+
                         <li class="nav-item">
                             <a class="nav-link @(currentController == "Home" && currentAction == "Index" ? "active" : "")"
                                asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link @(currentController == "Home" && currentAction == "Privacy" ? "active" : "")"
                                asp-controller="Home" asp-action="Privacy">About</a>
                         </li>
+
                         @if (SignInManager.IsSignedIn(User))
                         {
+                            @* ── Links visible to all logged-in users ── *@
                             <li class="nav-item">
                                 <a class="nav-link @(currentController == "Membership" && currentAction == "YourMembership" ? "active" : "")"
-                                   asp-controller="Membership" asp-action="YourMembership">Membership</a>
+                                   asp-controller="Membership" asp-action="YourMembership">
+                                    Your Membership
+                                </a>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link @(currentController == "Workout" ? "active" : "")"
-                                   asp-controller="Workout" asp-action="History">Workouts</a>
+                                   asp-controller="Workout" asp-action="History">
+                                    Workouts
+                                </a>
                             </li>
+
                             <li class="nav-item">
-                                <a class="nav-link @(currentController == "Trainer" && currentAction != "Dashboard" ? "active" : "")"
-                                   asp-controller="Trainer" asp-action="Browse">Trainers</a>
+                                <a class="nav-link @(currentController == "Trainer" && currentAction == "Browse" ? "active" : "")"
+                                   asp-controller="Trainer" asp-action="Browse">
+                                    Trainers
+                                </a>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link @(currentController == "Trainer" && currentAction == "MySessions" ? "active" : "")"
-                                   asp-controller="Trainer"
-                                   asp-action="MySessions">
+                                   asp-controller="Trainer" asp-action="MySessions">
                                     My Sessions
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link @(currentController == "Trainer" && currentAction == "MySchedule" ? "active" : "")"
-                                   asp-controller="Trainer"
-                                   asp-action="MySchedule">
-                                    My Schedule
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link @(currentController == "Trainer" && currentAction == "Dashboard" ? "active" : "")"
-                                   asp-controller="Trainer"
-                                   asp-action="Dashboard">
-                                    Trainer Panel
-                                </a>
-                            </li>
+
+                            @* ── Trainer-role links ── *@
+                            @if (User.IsInRole(Fitness_Membership_Tracker.Constants.Roles.Trainer))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link @(currentController == "Trainer" && currentAction == "MySchedule" ? "active" : "")"
+                                       asp-controller="Trainer" asp-action="MySchedule">
+                                        My Schedule
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(currentController == "Trainer" && currentAction == "Dashboard" ? "active" : "")"
+                                       asp-controller="Trainer" asp-action="Dashboard">
+                                        Trainer Panel
+                                    </a>
+                                </li>
+                            }
+
+                            @* ── Admin links ── *@
+                            @if (User.IsInRole(Fitness_Membership_Tracker.Constants.Roles.Admin))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link @(currentController == "Admin" && currentAction == "Dashboard" ? "active" : "")"
+                                       asp-controller="Admin" asp-action="Dashboard">
+                                        Admin Dashboard
+                                    </a>
+                                </li>
+                            }
                         }
-                        @if (User.IsInRole(Fitness_Membership_Tracker.Constants.Roles.Admin))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link @(currentController == "Admin" && currentAction == "Dashboard" ? "active" : "")"
-                                   asp-controller="Admin" asp-action="Dashboard">Admin</a>
-                            </li>
-                        }
+
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -89,15 +106,15 @@
         </nav>
     </header>
 
-    <div class="container px-4 px-lg-3" style="max-width:1320px;">
-        <main role="main" class="pb-3 pt-4">
+    <div class="container">
+        <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="footer border-top mt-5">
-        <div class="container d-flex justify-content-between align-items-center" style="max-width:1320px;">
-            <span>&copy; @DateTime.Now.Year — FitZone Membership Tracker</span>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; @DateTime.Now.Year - Fitness Membership Tracker -
             <a asp-controller="Home" asp-action="Privacy">About</a>
         </div>
     </footer>

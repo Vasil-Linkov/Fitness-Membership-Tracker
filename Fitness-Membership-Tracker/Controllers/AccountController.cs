@@ -2,21 +2,19 @@ using Fitness_Membership_Tracker.Constants;
 using Fitness_Membership_Tracker.Data.DataModels;
 using Fitness_Membership_Tracker.Models;
 using Fitness_Membership_Tracker.Models.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fitness_Membership_Tracker.Controllers
 {
-    [Authorize]
     public class AccountController : Controller
     {
         private readonly SignInManager<Member> _signInManager;
-        private readonly UserManager<Member> _userManager;
+        private readonly UserManager<Member>   _userManager;
 
         public AccountController(
             SignInManager<Member> signInManager,
-            UserManager<Member> userManager)
+            UserManager<Member>   userManager)
         {
             _signInManager = signInManager;
             _userManager   = userManager;
@@ -25,9 +23,12 @@ namespace Fitness_Membership_Tracker.Controllers
         // ─── Login ───────────────────────────────────────────────────────────
 
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult Login(string? returnUrl)
         {
+            // If already logged in, go home
+            if (_signInManager.IsSignedIn(User))
+                return RedirectToAction("Index", "Home");
+
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -43,7 +44,7 @@ namespace Fitness_Membership_Tracker.Controllers
 
             if (user == null || user.IsDeleted)
             {
-                ModelState.AddModelError("", "Invalid login attempt.");
+                ModelState.AddModelError("", "Invalid email or password.");
                 return View(model);
             }
 
@@ -55,7 +56,6 @@ namespace Fitness_Membership_Tracker.Controllers
 
             if (result.Succeeded)
             {
-                // Redirect based on role 
                 if (await _userManager.IsInRoleAsync(user, Roles.Admin))
                     return RedirectToAction("Dashboard", "Admin");
 
@@ -71,7 +71,21 @@ namespace Fitness_Membership_Tracker.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            ModelState.AddModelError("", "Invalid login attempt.");
+            if (result.IsNotAllowed)
+            {
+                // This happens when RequireConfirmedEmail = true but email not confirmed.
+                // Should no longer occur after the Program.cs fix, but kept for safety.
+                ModelState.AddModelError("", "Account not confirmed. Please contact an administrator.");
+                return View(model);
+            }
+
+            if (result.IsLockedOut)
+            {
+                ModelState.AddModelError("", "Account is locked out. Please try again later.");
+                return View(model);
+            }
+
+            ModelState.AddModelError("", "Invalid email or password.");
             return View(model);
         }
 
@@ -85,11 +99,15 @@ namespace Fitness_Membership_Tracker.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // ─── Register (public self-registration — Member role only) ──────────
+        // ─── Register ────────────────────────────────────────────────────────
 
         [HttpGet]
         public IActionResult Register()
         {
+            // If already logged in, go home instead of showing register page
+            if (_signInManager.IsSignedIn(User))
+                return RedirectToAction("Index", "Home");
+
             return View();
         }
 
@@ -100,10 +118,10 @@ namespace Fitness_Membership_Tracker.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var existingUser = await _userManager.FindByEmailAsync(model.Email);
-            if (existingUser != null)
+            var existing = await _userManager.FindByEmailAsync(model.Email);
+            if (existing != null)
             {
-                ModelState.AddModelError(nameof(model.Email), "Email is already in use.");
+                ModelState.AddModelError(nameof(model.Email), "This email is already registered.");
                 return View(model);
             }
 
@@ -111,17 +129,15 @@ namespace Fitness_Membership_Tracker.Controllers
             {
                 UserName  = model.Email,
                 Email     = model.Email,
-                IsDeleted = false
+                IsDeleted = false,
+                // Confirm immediately — no email flow needed
+                EmailConfirmed = true
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                // Auto-confirm email (proof-of-concept)
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                await _userManager.ConfirmEmailAsync(user, token);
-
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }

@@ -457,6 +457,7 @@ namespace Fitness_Membership_Tracker.Controllers
 
         #endregion
 
+
         //-------
         #region Staff Accounts
 
@@ -465,8 +466,8 @@ namespace Fitness_Membership_Tracker.Controllers
         {
             var model = new CreateStaffAccountViewModel
             {
-                Trainers = await GetAvailableTrainersForAccount(),
-                Employees = await GetAvailableEmployeesForAccount()
+                Trainers = await GetTrainerSelectList(),
+                Employees = await GetEmployeeSelectList()
             };
             return View(model);
         }
@@ -484,47 +485,24 @@ namespace Fitness_Membership_Tracker.Controllers
 
             if (!ModelState.IsValid)
             {
-                model.Trainers = await GetAvailableTrainersForAccount();
-                model.Employees = await GetAvailableEmployeesForAccount();
+                model.Trainers = await GetTrainerSelectList();
+                model.Employees = await GetEmployeeSelectList();
                 return View(model);
             }
 
-            // Check if email exists
-            var existing = await _userManager.FindByEmailAsync(model.Email);
-            if (existing != null)
+            // Check the email is not already taken
+            if (await _userManager.FindByEmailAsync(model.Email) != null)
             {
                 ModelState.AddModelError(nameof(model.Email), "This email is already in use.");
-                model.Trainers = await GetAvailableTrainersForAccount();
-                model.Employees = await GetAvailableEmployeesForAccount();
+                model.Trainers = await GetTrainerSelectList();
+                model.Employees = await GetEmployeeSelectList();
                 return View(model);
             }
-
-            // Build the email used as UserName — prefer the profile's own email so
-            // the trainer/employee can recognise their account.
-            string accountEmail = model.Email;
-
-            if (model.Role == Roles.Trainer && model.TrainerId.HasValue)
-            {
-                var trainer = await _trainerService.GetByIdAsync(model.TrainerId.Value);
-                if (trainer != null)
-                    accountEmail = trainer.Email; // overwrite with profile email
-            }
-            else if (model.Role == Roles.Employee && model.EmployeeId.HasValue)
-            {
-                var employee = await _employeeService.GetByIdAsync(model.EmployeeId.Value);
-                if (employee != null)
-                    accountEmail = employee.Email;
-            }
-
-            // If the profile's own email is already taken, fall back to what the admin typed
-            var profileEmailTaken = await _userManager.FindByEmailAsync(accountEmail);
-            if (profileEmailTaken != null)
-                accountEmail = model.Email;
 
             var user = new Member
             {
-                UserName = accountEmail,
-                Email = accountEmail,
+                UserName = model.Email,
+                Email = model.Email,
                 EmailConfirmed = true,
                 IsDeleted = false
             };
@@ -536,27 +514,23 @@ namespace Fitness_Membership_Tracker.Controllers
                 foreach (var error in createResult.Errors)
                     ModelState.AddModelError("", error.Description);
 
-                model.Trainers = await GetAvailableTrainersForAccount();
-                model.Employees = await GetAvailableEmployeesForAccount();
+                model.Trainers = await GetTrainerSelectList();
+                model.Employees = await GetEmployeeSelectList();
                 return View(model);
             }
 
             await _userManager.AddToRoleAsync(user, model.Role);
 
-            TempData["Success"] = $"{model.Role} account created. Login: {accountEmail}";
+            TempData["Success"] = $"{model.Role} account created successfully. Login: {model.Email}";
             return RedirectToAction(nameof(Dashboard));
         }
 
-        // ── Helpers for staff-account dropdowns ──────────────────────────────
+        // ── Private helpers ───────────────────────────────────────────────────
 
-        /// <summary>Trainers that do not yet have a Member (Identity) account.</summary>
-        private async Task<IEnumerable<SelectListItem>> GetAvailableTrainersForAccount()
+        /// <summary>All trainers — no filtering, admin sees everyone.</summary>
+        private async Task<IEnumerable<SelectListItem>> GetTrainerSelectList()
         {
-            var allTrainers = await _trainerService.GetTrainersAsync(null, string.Empty);
-            var existingEmails = _userManager.Users.Select(u => u.Email).ToHashSet();
-
-            return allTrainers
-                .Where(t => !existingEmails.Contains(t.Email))
+            return (await _trainerService.GetTrainersAsync(null, string.Empty))
                 .Select(t => new SelectListItem
                 {
                     Value = t.Id.ToString(),
@@ -565,14 +539,10 @@ namespace Fitness_Membership_Tracker.Controllers
                 .OrderBy(item => item.Text);
         }
 
-        /// <summary>Employees that do not yet have a Member (Identity) account.</summary>
-        private async Task<IEnumerable<SelectListItem>> GetAvailableEmployeesForAccount()
+        /// <summary>All employees — no filtering, admin sees everyone.</summary>
+        private async Task<IEnumerable<SelectListItem>> GetEmployeeSelectList()
         {
-            var allEmployees = await _employeeService.GetEmployeesAsync(null, string.Empty);
-            var existingEmails = _userManager.Users.Select(u => u.Email).ToHashSet();
-
-            return allEmployees
-                .Where(e => !existingEmails.Contains(e.Email))
+            return (await _employeeService.GetEmployeesAsync(null, string.Empty))
                 .Select(e => new SelectListItem
                 {
                     Value = e.Id.ToString(),
@@ -581,7 +551,8 @@ namespace Fitness_Membership_Tracker.Controllers
                 .OrderBy(item => item.Text);
         }
 
-        #endregion 
+        #endregion
+
 
 
         /* Since dropdown menues are used in many selections,

@@ -25,7 +25,7 @@ namespace Fitness_Membership_Tracker
             builder.Services.AddIdentity<Member, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
-                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedEmail = false;
 
                 options.Lockout.AllowedForNewUsers = false;
                 options.Lockout.MaxFailedAccessAttempts = int.MaxValue;
