@@ -9,18 +9,16 @@ namespace Fitness_Membership_Tracker.Models.AdminViewModels
         [Display(Name = "Staff Role")]
         public string Role { get; set; } = string.Empty;
 
-        // Used when Role = "Trainer"
-        [Display(Name = "Link to Trainer Profile")]
+        [Display(Name = "Trainer Profile")]
         public int? TrainerId { get; set; }
 
-        // Used when Role = "Employee"
-        [Display(Name = "Link to Employee Profile")]
+        [Display(Name = "Employee Profile")]
         public int? EmployeeId { get; set; }
 
-        [Required]
+        // Optional — if blank the controller resolves it from the selected profile
         [EmailAddress]
         [Display(Name = "Login Email")]
-        public string Email { get; set; } = string.Empty;
+        public string? Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -33,8 +31,7 @@ namespace Fitness_Membership_Tracker.Models.AdminViewModels
         [Display(Name = "Confirm Password")]
         public string ConfirmPassword { get; set; } = string.Empty;
 
-        // Dropdown data
-        public IEnumerable<SelectListItem> Trainers { get; set; } = Enumerable.Empty<SelectListItem>();
+        public IEnumerable<SelectListItem> Trainers  { get; set; } = Enumerable.Empty<SelectListItem>();
         public IEnumerable<SelectListItem> Employees { get; set; } = Enumerable.Empty<SelectListItem>();
     }
 }

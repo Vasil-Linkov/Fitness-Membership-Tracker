@@ -476,12 +476,32 @@ namespace Fitness_Membership_Tracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateStaffAccount(CreateStaffAccountViewModel model)
         {
-            // Role-specific profile validation
+            // ── Step 1: resolve email from profile if the field was left blank ──
+            if (string.IsNullOrWhiteSpace(model.Email))
+            {
+                if (model.Role == Roles.Trainer && model.TrainerId.HasValue)
+                {
+                    var trainer = await _trainerService.GetByIdAsync(model.TrainerId.Value);
+                    model.Email = trainer?.Email ?? string.Empty;
+                }
+                else if (model.Role == Roles.Employee && model.EmployeeId.HasValue)
+                {
+                    var employee = await _employeeService.GetByIdAsync(model.EmployeeId.Value);
+                    model.Email = employee?.Email ?? string.Empty;
+                }
+            }
+
+            // ── Step 2: role-specific profile validation ──────────────────────
             if (model.Role == Roles.Trainer && model.TrainerId == null)
                 ModelState.AddModelError(nameof(model.TrainerId), "Please select a trainer profile.");
 
             if (model.Role == Roles.Employee && model.EmployeeId == null)
                 ModelState.AddModelError(nameof(model.EmployeeId), "Please select an employee profile.");
+
+            // Email must be resolved by now (either typed or pulled from profile)
+            if (string.IsNullOrWhiteSpace(model.Email))
+                ModelState.AddModelError(nameof(model.Email),
+                    "Could not determine an email. Please select a profile or enter an email manually.");
 
             if (!ModelState.IsValid)
             {
@@ -490,15 +510,17 @@ namespace Fitness_Membership_Tracker.Controllers
                 return View(model);
             }
 
-            // Check the email is not already taken
+            // ── Step 3: check the resolved email is not already taken ─────────
             if (await _userManager.FindByEmailAsync(model.Email) != null)
             {
-                ModelState.AddModelError(nameof(model.Email), "This email is already in use.");
+                ModelState.AddModelError(nameof(model.Email),
+                    $"An account with email '{model.Email}' already exists.");
                 model.Trainers = await GetTrainerSelectList();
                 model.Employees = await GetEmployeeSelectList();
                 return View(model);
             }
 
+            // ── Step 4: create the Identity account ───────────────────────────
             var user = new Member
             {
                 UserName = model.Email,
@@ -521,13 +543,12 @@ namespace Fitness_Membership_Tracker.Controllers
 
             await _userManager.AddToRoleAsync(user, model.Role);
 
-            TempData["Success"] = $"{model.Role} account created successfully. Login: {model.Email}";
+            TempData["Success"] = $"{model.Role} account created. Login email: {model.Email}";
             return RedirectToAction(nameof(Dashboard));
         }
 
-        // ── Private helpers ───────────────────────────────────────────────────
+        // ── Dropdown helpers ──────────────────────────────────────────────────
 
-        /// <summary>All trainers — no filtering, admin sees everyone.</summary>
         private async Task<IEnumerable<SelectListItem>> GetTrainerSelectList()
         {
             return (await _trainerService.GetTrainersAsync(null, string.Empty))
@@ -539,7 +560,6 @@ namespace Fitness_Membership_Tracker.Controllers
                 .OrderBy(item => item.Text);
         }
 
-        /// <summary>All employees — no filtering, admin sees everyone.</summary>
         private async Task<IEnumerable<SelectListItem>> GetEmployeeSelectList()
         {
             return (await _employeeService.GetEmployeesAsync(null, string.Empty))
