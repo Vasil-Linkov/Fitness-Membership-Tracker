@@ -1,4 +1,4 @@
-@model IEnumerable<Fitness_Membership_Tracker.Data.DataModels.Payment>
+﻿@model IEnumerable<Fitness_Membership_Tracker.Data.DataModels.Payment>
 
 @{
     ViewData["Title"] = "Admin - Payments";
@@ -13,69 +13,24 @@
         <a asp-action="CreatePayment" class="btn btn-primary">Create Payment</a>
     </div>
 
-    @* ── Search bar ──────────────────────────────────────────────────────── *@
-    <form method="get" class="row g-2 align-items-end mb-4">
-        <div class="col-md-5">
-            <label class="form-label text-muted small mb-1">Search by payer email</label>
-            <input type="text"
-                   name="search"
-                   value="@ViewBag.Search"
-                   placeholder="e.g. aleksand…"
-                   class="form-control form-control-sm" />
-        </div>
-        <div class="col-md-3">
-            <label class="form-label text-muted small mb-1">Filter by date</label>
-            <input type="date"
-                   name="date"
-                   value="@ViewBag.Date"
-                   class="form-control form-control-sm" />
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary btn-sm">Search</button>
-            <a asp-action="Payments" class="btn btn-outline-secondary btn-sm ms-1">Clear</a>
-        </div>
-    </form>
+    <div class="mb-3">
+        <input type="text"
+               id="paymentsSearch"
+               class="form-control"
+               placeholder="Search by member, amount, method, date…"
+               autocomplete="off" />
+    </div>
 
-    @* ── Results ─────────────────────────────────────────────────────────── *@
     <div class="card shadow-sm">
         <div class="card-body">
             @if (Model == null || !Model.Any())
             {
-                <p class="text-muted mb-0">
-                    @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string) || !string.IsNullOrWhiteSpace(ViewBag.Date as string))
-                    {
-                        <span>No payments match your search criteria.</span>
-                    }
-                    else
-                    {
-                        <span>No payments found.</span>
-                    }
-                </p>
+                <p class="text-muted mb-0">No payments found.</p>
             }
             else
             {
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small">
-                        Showing <strong>@Model.Count()</strong> payment@(Model.Count() != 1 ? "s" : "")
-                        @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
-                        {
-                            <span> matching &ldquo;@ViewBag.Search&rdquo;</span>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(ViewBag.Date as string))
-                        {
-                            <span> on @DateTime.Parse(ViewBag.Date).ToString("dd MMM yyyy")</span>
-                        }
-                    </span>
-                    @{
-                        var total = Model.Sum(p => p.Amount);
-                    }
-                    <span class="text-muted small fw-semibold">
-                        Total: @total.ToString("0.00") @(Model.FirstOrDefault()?.Currency ?? "EUR")
-                    </span>
-                </div>
-
                 <div class="table-responsive">
-                    <table class="table table-striped align-middle mb-0">
+                    <table class="table table-striped align-middle mb-0" id="paymentsTable">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -101,7 +56,38 @@
                         </tbody>
                     </table>
                 </div>
+
+                <p id="paymentsNoResults" class="text-muted mb-0 mt-2" style="display:none;">
+                    No payments match your search.
+                </p>
             }
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    (function () {
+        const input  = document.getElementById('paymentsSearch');
+        const tbody  = document.querySelector('#paymentsTable tbody');
+        const noMsg  = document.getElementById('paymentsNoResults');
+
+        if (!input || !tbody) return;
+
+        input.addEventListener('input', function () {
+            const term  = this.value.trim().toLowerCase();
+            const rows  = tbody.querySelectorAll('tr');
+            let visible = 0;
+
+            rows.forEach(function (row) {
+                const text = row.textContent.toLowerCase();
+                const show = !term || text.includes(term);
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            noMsg.style.display = visible === 0 ? '' : 'none';
+        });
+    })();
+</script>
+}

@@ -10,6 +10,48 @@
     <a asp-action="CreateEmployee" class="btn btn-primary">Add Employee</a>
 </div>
 
+<form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-md-4">
+        <label class="form-label text-muted small mb-1">Location</label>
+        <select name="locationId" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">All Locations</option>
+            @{
+                var selectedLocationId = ViewBag.SelectedLocationId?.ToString();
+                var locations = ViewBag.Locations as IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>;
+            }
+            @foreach (var loc in locations)
+            {
+                if (loc.Value == selectedLocationId)
+                {
+                    <option value="@loc.Value" selected>@loc.Text</option>
+                }
+                else
+                {
+                    <option value="@loc.Value">@loc.Text</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label text-muted small mb-1">Search (server)</label>
+        <input type="text" name="search" value="@ViewBag.Search"
+               placeholder="Name or email…"
+               class="form-control form-control-sm" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+        <a asp-action="Employees" class="btn btn-outline-secondary btn-sm ms-1">Clear</a>
+    </div>
+</form>
+
+<div class="mb-3">
+    <input type="text"
+           id="employeesSearch"
+           class="form-control"
+           placeholder="Filter results by name, email, location, hire date…"
+           autocomplete="off" />
+</div>
+
 <div class="card shadow-sm">
     <div class="card-body">
 
@@ -19,7 +61,7 @@
         }
         else
         {
-            <table class="table table-striped">
+            <table class="table table-striped" id="employeesTable">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -36,11 +78,12 @@
                         <tr>
                             <td>@employee.FirstName @employee.LastName</td>
                             <td>@employee.Email</td>
-                            <td>@employee.Location?.Address, @employee.Location.City</td>
+                            <td>@employee.Location?.Address, @employee.Location?.City</td>
                             <td>@employee.HireDate.ToShortDateString()</td>
 
                             <td>
                                 <form asp-action="DeleteEmployee" method="post">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@employee.Id" />
                                     <button class="btn btn-sm btn-danger">Delete</button>
                                 </form>
@@ -49,7 +92,38 @@
                     }
                 </tbody>
             </table>
+
+            <p id="employeesNoResults" class="text-muted mb-0" style="display:none;">
+                No employees match your filter.
+            </p>
         }
 
     </div>
 </div>
+
+@section Scripts {
+<script>
+    (function () {
+        const input  = document.getElementById('employeesSearch');
+        const tbody  = document.querySelector('#employeesTable tbody');
+        const noMsg  = document.getElementById('employeesNoResults');
+
+        if (!input || !tbody) return;
+
+        input.addEventListener('input', function () {
+            const term  = this.value.trim().toLowerCase();
+            const rows  = tbody.querySelectorAll('tr');
+            let visible = 0;
+
+            rows.forEach(function (row) {
+                const text = row.textContent.toLowerCase();
+                const show = !term || text.includes(term);
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            noMsg.style.display = visible === 0 ? '' : 'none';
+        });
+    })();
+</script>
+}

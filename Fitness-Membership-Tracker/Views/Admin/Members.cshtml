@@ -6,6 +6,14 @@
 
 <h2 class="mb-3">Members</h2>
 
+<div class="mb-3">
+    <input type="text"
+           id="membersSearch"
+           class="form-control"
+           placeholder="Search by email, membership status…"
+           autocomplete="off" />
+</div>
+
 <div class="card shadow-sm">
     <div class="card-body">
 
@@ -15,7 +23,7 @@
         }
         else
         {
-            <table class="table table-striped">
+            <table class="table table-striped" id="membersTable">
 
                 <thead>
                     <tr>
@@ -49,7 +57,38 @@
                 </tbody>
 
             </table>
+
+            <p id="membersNoResults" class="text-muted mb-0" style="display:none;">
+                No members match your search.
+            </p>
         }
 
     </div>
 </div>
+
+@section Scripts {
+<script>
+    (function () {
+        const input   = document.getElementById('membersSearch');
+        const tbody   = document.querySelector('#membersTable tbody');
+        const noMsg   = document.getElementById('membersNoResults');
+
+        if (!input || !tbody) return;
+
+        input.addEventListener('input', function () {
+            const term  = this.value.trim().toLowerCase();
+            const rows  = tbody.querySelectorAll('tr');
+            let visible = 0;
+
+            rows.forEach(function (row) {
+                const text = row.textContent.toLowerCase();
+                const show = !term || text.includes(term);
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            noMsg.style.display = visible === 0 ? '' : 'none';
+        });
+    })();
+</script>
+}

@@ -1,4 +1,4 @@
-@model IEnumerable<Trainer>
+@model IEnumerable<Fitness_Membership_Tracker.Data.DataModels.Trainer>
 
 @{
     ViewData["Title"] = "Admin - Trainers";
@@ -13,7 +13,7 @@
         <a asp-action="CreateTrainer" class="btn btn-primary">Add Trainer</a>
     </div>
 
-    <form method="get" class="row g-2 align-items-end mb-4">
+    <form method="get" class="row g-2 align-items-end mb-3">
         <div class="col-md-4">
             <label class="form-label text-muted small mb-1">Location</label>
             <select name="locationId" class="form-select form-select-sm" onchange="this.form.submit()">
@@ -25,7 +25,7 @@
             </select>
         </div>
         <div class="col-md-4">
-            <label class="form-label text-muted small mb-1">Search</label>
+            <label class="form-label text-muted small mb-1">Search (server)</label>
             <input type="text" name="search" value="@ViewBag.Search"
                    placeholder="Name, email or specialization…"
                    class="form-control form-control-sm" />
@@ -36,6 +36,14 @@
         </div>
     </form>
 
+    <div class="mb-3">
+        <input type="text"
+               id="trainersSearch"
+               class="form-control"
+               placeholder="Filter results by name, email, specialization, location, hire date…"
+               autocomplete="off" />
+    </div>
+
     <div class="card shadow-sm">
         <div class="card-body">
             @if (!Model.Any())
@@ -45,7 +53,7 @@
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-striped align-middle mb-0">
+                    <table class="table table-striped align-middle mb-0" id="trainersTable">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -98,7 +106,38 @@
                         </tbody>
                     </table>
                 </div>
+
+                <p id="trainersNoResults" class="text-muted mb-0 mt-2" style="display:none;">
+                    No trainers match your filter.
+                </p>
             }
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    (function () {
+        const input  = document.getElementById('trainersSearch');
+        const tbody  = document.querySelector('#trainersTable tbody');
+        const noMsg  = document.getElementById('trainersNoResults');
+
+        if (!input || !tbody) return;
+
+        input.addEventListener('input', function () {
+            const term  = this.value.trim().toLowerCase();
+            const rows  = tbody.querySelectorAll('tr');
+            let visible = 0;
+
+            rows.forEach(function (row) {
+                const text = row.textContent.toLowerCase();
+                const show = !term || text.includes(term);
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            noMsg.style.display = visible === 0 ? '' : 'none';
+        });
+    })();
+</script>
+}

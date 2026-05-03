@@ -13,6 +13,14 @@
         <a asp-action="CreateMembership" class="btn btn-primary">Create Membership</a>
     </div>
 
+    <div class="mb-3">
+        <input type="text"
+               id="membershipsSearch"
+               class="form-control"
+               placeholder="Search by tier, location, date, status…"
+               autocomplete="off" />
+    </div>
+
     <div class="card shadow-sm">
         <div class="card-body">
             @if (Model == null || !Model.Any())
@@ -22,7 +30,7 @@
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-striped align-middle mb-0">
+                    <table class="table table-striped align-middle mb-0" id="membershipsTable">
                         <thead>
                             <tr>
                                 <th>Id</th>
@@ -70,7 +78,38 @@
                         </tbody>
                     </table>
                 </div>
+
+                <p id="membershipsNoResults" class="text-muted mb-0 mt-2" style="display:none;">
+                    No memberships match your search.
+                </p>
             }
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    (function () {
+        const input  = document.getElementById('membershipsSearch');
+        const tbody  = document.querySelector('#membershipsTable tbody');
+        const noMsg  = document.getElementById('membershipsNoResults');
+
+        if (!input || !tbody) return;
+
+        input.addEventListener('input', function () {
+            const term  = this.value.trim().toLowerCase();
+            const rows  = tbody.querySelectorAll('tr');
+            let visible = 0;
+
+            rows.forEach(function (row) {
+                const text = row.textContent.toLowerCase();
+                const show = !term || text.includes(term);
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            noMsg.style.display = visible === 0 ? '' : 'none';
+        });
+    })();
+</script>
+}

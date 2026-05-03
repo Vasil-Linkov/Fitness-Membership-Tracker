@@ -15,6 +15,14 @@
 
     <partial name="_VisitStatsPartial" model="Model" />
 
+    <div class="mb-3">
+        <input type="text"
+               id="visitsSearch"
+               class="form-control"
+               placeholder="Search by member, location, tier, date…"
+               autocomplete="off" />
+    </div>
+
     <div class="card shadow-sm">
         <div class="card-body">
             <h5 class="mb-3">Visit Records</h5>
@@ -26,7 +34,7 @@
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-striped align-middle mb-0">
+                    <table class="table table-striped align-middle mb-0" id="visitsTable">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -72,7 +80,38 @@
                         </tbody>
                     </table>
                 </div>
+
+                <p id="visitsNoResults" class="text-muted mb-0 mt-2" style="display:none;">
+                    No visits match your search.
+                </p>
             }
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    (function () {
+        const input  = document.getElementById('visitsSearch');
+        const tbody  = document.querySelector('#visitsTable tbody');
+        const noMsg  = document.getElementById('visitsNoResults');
+
+        if (!input || !tbody) return;
+
+        input.addEventListener('input', function () {
+            const term  = this.value.trim().toLowerCase();
+            const rows  = tbody.querySelectorAll('tr');
+            let visible = 0;
+
+            rows.forEach(function (row) {
+                const text = row.textContent.toLowerCase();
+                const show = !term || text.includes(term);
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            noMsg.style.display = visible === 0 ? '' : 'none';
+        });
+    })();
+</script>
+}
